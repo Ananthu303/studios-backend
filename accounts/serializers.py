@@ -1,8 +1,9 @@
-from .models import User
 from rest_framework import serializers
 from rest_framework.exceptions import NotAuthenticated
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from .models import User
 from .permissions import IsSuperAdmin
 
 
@@ -10,6 +11,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("id", "phone_number", "role", "is_active")
+        read_only_fields = ("id", "phone_number", "role", "is_active")
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -28,7 +30,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"password_2": "Passwords do not match."})
 
         role = attrs.get("role", User.Role.MEMBER)
-        request = self.context.get("request")
         if role != User.Role.MEMBER:
             request = self.context.get("request")
             if not request or not IsSuperAdmin().has_permission(request, None):

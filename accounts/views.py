@@ -1,7 +1,8 @@
-from rest_framework import permissions, status, viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
+
 from .models import User
 from .permissions import IsStaffOrSuperAdmin
 from .serializers import (
@@ -25,7 +26,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if not user.is_authenticated:
             return User.objects.none()
         if IsStaffOrSuperAdmin().has_permission(self.request, self):
-            return User.objects.all()
+            return User.objects.all().order_by("id")
         return User.objects.filter(pk=user.pk)
 
     def get_permissions(self):
@@ -92,3 +93,7 @@ class UserViewSet(viewsets.ModelViewSet):
             {"access": serializer.validated_data["refresh"]},
             status=status.HTTP_200_OK,
         )
+
+    @action(detail=False, methods=["get"], url_path="me")
+    def me(self, request):
+        return Response(UserDetailSerializer(request.user).data)

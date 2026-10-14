@@ -6,6 +6,7 @@ class UserManager(BaseUserManager):
         if not phone_number:
             raise ValueError("Phone number is required")
 
+        extra_fields.setdefault("username", str(phone_number))
         user = self.model(
             phone_number=phone_number,
             **extra_fields,

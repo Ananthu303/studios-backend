@@ -1,14 +1,15 @@
-from django.contrib.auth.models import AbstractUser, UserManager as DjangoUserManager
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
-from .managers import UserManager
 from phonenumber_field.modelfields import PhoneNumberField
+
+from .managers import UserManager
 
 
 class User(AbstractUser):
     class Role(models.TextChoices):
         STAFF = "STAFF", "Staff"
-        SUPER_ADMIN = "SUPER ADMIN", "Super admin"
+        SUPER_ADMIN = "SUPER_ADMIN", "Super admin"
         MEMBER = "MEMBER", "Member"
 
     phone_number = PhoneNumberField(unique=True)
@@ -41,6 +42,10 @@ class User(AbstractUser):
 
     def __str__(self):
         return str(self.phone_number)
+
+    @property
+    def is_studio_staff(self) -> bool:
+        return self.role in (self.Role.STAFF, self.Role.SUPER_ADMIN)
 
 
 class TimeStampedModel(models.Model):
