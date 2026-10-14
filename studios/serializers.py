@@ -1,5 +1,8 @@
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
+from django.utils import timezone
 from rest_framework import serializers
+
 from .models import FitnessClass, Studio
 
 
@@ -20,13 +23,14 @@ class StudioSerializer(serializers.ModelSerializer):
         try:
             ZoneInfo(str(value))
         except (ZoneInfoNotFoundError, ValueError):
-            raise serializers.ValidationError("Invalid IANA timezone.")
+            raise serializers.ValidationError("Invalid IANA timezone.")  # noqa: B904
         return value
 
 
 class FitnessClassSerializer(serializers.ModelSerializer):
-    spots_available = serializers.SerializerMethodField()
+    spots_available = serializers.IntegerField(read_only=True)
     end_time = serializers.DateTimeField(read_only=True)
+    confirmed_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = FitnessClass
@@ -38,6 +42,7 @@ class FitnessClassSerializer(serializers.ModelSerializer):
             "end_time",
             "duration_minutes",
             "spots",
+            "confirmed_count",
             "spots_available",
             "credit_cost",
             "created_at",
@@ -46,10 +51,27 @@ class FitnessClassSerializer(serializers.ModelSerializer):
         read_only_fields = [
             "id",
             "end_time",
+            "confirmed_count",
             "spots_available",
             "created_at",
             "updated_at",
         ]
 
-    def get_spots_available(self, obj):
-        return obj.spots
+    def validate_start_time(self, value):
+        if value and value <= timezone.now():
+            raise serializers.ValidationError("Class start time must be in the future.")
+        return value
+
+    def validate(self, attrs):
+        spots = attrs.get("spots")
+        if self.instance is not None and spots is not None:
+            if spots < self.instance.confirmed_count:
+                raise serializers.ValidationError(
+                    {
+                        "spots": (
+                            "Cannot reduce spots below the number of "
+                            "confirmed bookings."
+                        )
+                    }
+                )
+        return attrs

@@ -1,9 +1,10 @@
+from datetime import timedelta
+
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from accounts.models import TimeStampedModel
 from timezone_field import TimeZoneField
-from django.db.models import Q
-from datetime import timedelta
+
+from accounts.models import TimeStampedModel
 
 
 class Studio(TimeStampedModel):
@@ -35,30 +36,21 @@ class FitnessClass(TimeStampedModel):
     spots = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1)],
     )
+    confirmed_count = models.PositiveSmallIntegerField(default=0)
     credit_cost = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1)],
     )
 
     class Meta:
         ordering = ["start_time"]
-        constraints = [
-            models.CheckConstraint(
-                condition=Q(duration_minutes__gte=1),
-                name="class_duration_positive",
-            ),
-            models.CheckConstraint(
-                condition=Q(spots__gte=1),
-                name="class_spots_positive",
-            ),
-            models.CheckConstraint(
-                condition=Q(credit_cost__gte=1),
-                name="class_credit_cost_positive",
-            ),
-        ]
 
     @property
     def end_time(self):
         return self.start_time + timedelta(minutes=self.duration_minutes)
+
+    @property
+    def spots_available(self) -> int:
+        return max(self.spots - self.confirmed_count, 0)
 
     def __str__(self):
         return f"{self.name} - {self.start_time}"
