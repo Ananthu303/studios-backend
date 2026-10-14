@@ -59,7 +59,7 @@ class Transaction(models.Model):
     amount = models.PositiveIntegerField()
     booking = models.ForeignKey(
         Booking,
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name="credit_transactions",

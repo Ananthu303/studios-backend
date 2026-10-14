@@ -1,0 +1,1097 @@
+{
+  "info": {
+    "name": "Studio Fitness Booking API - End to End Collection & Flows",
+    "_postman_id": "7b8f9a2e-4b71-46df-9d51-c081e2cb0965",
+    "description": "Comprehensive Postman Collection with automated End-to-End Postman Flows and test assertions for Studio Fitness Booking API.\nIncludes automated variable propagation, dynamic pre-request scripts, and assertions for the full boutique fitness lifecycle (Auth, Studio & Class Setup, Credit Grants, FIFO Deduction, Idempotency, Class Filling, Waitlist Promotion, and Cutoff Refunds).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:8000/api/v1", "type": "string" },
+    { "key": "staff_access", "value": "", "type": "string" },
+    { "key": "member1_access", "value": "", "type": "string" },
+    { "key": "member1_refresh", "value": "", "type": "string" },
+    { "key": "member2_access", "value": "", "type": "string" },
+    { "key": "member1_id", "value": "", "type": "string" },
+    { "key": "member2_id", "value": "", "type": "string" },
+    { "key": "studio_id", "value": "", "type": "string" },
+    { "key": "class_id", "value": "", "type": "string" },
+    { "key": "pack1_id", "value": "", "type": "string" },
+    { "key": "tx_id", "value": "", "type": "string" },
+    { "key": "booking1_id", "value": "", "type": "string" },
+    { "key": "waitlist_booking_id", "value": "", "type": "string" },
+    { "key": "flow_staff_token", "value": "", "type": "string" },
+    { "key": "flow_m1_phone", "value": "", "type": "string" },
+    { "key": "flow_m1_id", "value": "", "type": "string" },
+    { "key": "flow_m1_token", "value": "", "type": "string" },
+    { "key": "flow_m2_phone", "value": "", "type": "string" },
+    { "key": "flow_m2_id", "value": "", "type": "string" },
+    { "key": "flow_m2_token", "value": "", "type": "string" },
+    { "key": "flow_studio_id", "value": "", "type": "string" },
+    { "key": "flow_class_id", "value": "", "type": "string" },
+    { "key": "flow_class_start", "value": "", "type": "string" },
+    { "key": "flow_pack_expiry", "value": "", "type": "string" },
+    { "key": "flow_pack1_id", "value": "", "type": "string" },
+    { "key": "flow_pack2_id", "value": "", "type": "string" },
+    { "key": "flow_idem_key_1", "value": "", "type": "string" },
+    { "key": "flow_idem_key_2", "value": "", "type": "string" },
+    { "key": "flow_booking1_id", "value": "", "type": "string" },
+    { "key": "flow_booking2_id", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "0. End-to-End Core Booking Flow (1-Click Automated Runner)",
+      "description": "Automated sequential flow fulfilling §1 and §7 of the Machine Task. Runs end-to-end: authenticate, grant credits, book, fill the class, waitlist, cancel with cutoff refund, and auto-promote waitlisted member.",
+      "item": [
+        {
+          "name": "Step 00: Bootstrap Staff User (Create if Not Exists)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Staff user ready (201 Created or 400 Already Exists)', function () {",
+                  "  pm.expect([201, 400]).to.include(pm.response.code);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\\n  \\\"phone_number\\\": \\\"+919876500000\\\",\\n  \\\"password_1\\\": \\\"AdminPass123!\\\",\\n  \\\"password_2\\\": \\\"AdminPass123!\\\",\\n  \\\"role\\\": \\\"STAFF\\\"\\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/users/register/", "host": ["{{baseUrl}}"], "path": ["users", "register", ""] }
+          }
+        },
+        {
+          "name": "Step 01: Login Staff User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 OK', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.test('Has access token', function () { pm.expect(data.access).to.be.a('string'); });",
+                  "pm.collectionVariables.set('flow_staff_token', data.access);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone_number\": \"+919876500000\",\n  \"password\": \"AdminPass123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/users/login/", "host": ["{{baseUrl}}"], "path": ["users", "login", ""] }
+          }
+        },
+        {
+          "name": "Step 02: Register Member 1 (Dynamic Phone)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const rand = Math.floor(10000000 + Math.random() * 90000000);",
+                  "pm.collectionVariables.set('flow_m1_phone', '+9198' + rand);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 201 Created', function () { pm.response.to.have.status(201); });",
+                  "var data = pm.response.json();",
+                  "pm.test('Role is MEMBER', function () { pm.expect(data.role).to.eql('MEMBER'); });",
+                  "pm.collectionVariables.set('flow_m1_id', data.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone_number\": \"{{flow_m1_phone}}\",\n  \"password_1\": \"MemberPass123!\",\n  \"password_2\": \"MemberPass123!\",\n  \"role\": \"MEMBER\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/users/register/", "host": ["{{baseUrl}}"], "path": ["users", "register", ""] }
+          }
+        },
+        {
+          "name": "Step 03: Login Member 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 OK', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.collectionVariables.set('flow_m1_token', data.access);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone_number\": \"{{flow_m1_phone}}\",\n  \"password\": \"MemberPass123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/users/login/", "host": ["{{baseUrl}}"], "path": ["users", "login", ""] }
+          }
+        },
+        {
+          "name": "Step 04: Register Member 2 (Dynamic Phone)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const rand = Math.floor(10000000 + Math.random() * 90000000);",
+                  "pm.collectionVariables.set('flow_m2_phone', '+9197' + rand);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 201 Created', function () { pm.response.to.have.status(201); });",
+                  "var data = pm.response.json();",
+                  "pm.collectionVariables.set('flow_m2_id', data.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone_number\": \"{{flow_m2_phone}}\",\n  \"password_1\": \"MemberPass123!\",\n  \"password_2\": \"MemberPass123!\",\n  \"role\": \"MEMBER\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/users/register/", "host": ["{{baseUrl}}"], "path": ["users", "register", ""] }
+          }
+        },
+        {
+          "name": "Step 05: Login Member 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 OK', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.collectionVariables.set('flow_m2_token', data.access);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone_number\": \"{{flow_m2_phone}}\",\n  \"password\": \"MemberPass123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/users/login/", "host": ["{{baseUrl}}"], "path": ["users", "login", ""] }
+          }
+        },
+        {
+          "name": "Step 06: Staff Creates Studio",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 201 Created', function () { pm.response.to.have.status(201); });",
+                  "var data = pm.response.json();",
+                  "pm.test('Cutoff is 4 hours', function () { pm.expect(data.cancellation_cutoff_hours).to.eql(4); });",
+                  "pm.collectionVariables.set('flow_studio_id', data.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_staff_token}}", "type": "string" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tribeca Strength Studio\",\n  \"timezone\": \"America/New_York\",\n  \"cancellation_cutoff_hours\": 4\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/studios/", "host": ["{{baseUrl}}"], "path": ["studios", ""] }
+          }
+        },
+        {
+          "name": "Step 07: Staff Schedules Class (1 Spot, Cost 2 Credits)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const classStart = new Date(Date.now() + 24 * 3600 * 1000).toISOString();",
+                  "pm.collectionVariables.set('flow_class_start', classStart);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 201 Created', function () { pm.response.to.have.status(201); });",
+                  "var data = pm.response.json();",
+                  "pm.test('1 spot available', function () { pm.expect(data.spots_available).to.eql(1); });",
+                  "pm.collectionVariables.set('flow_class_id', data.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_staff_token}}", "type": "string" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studio\": {{flow_studio_id}},\n  \"name\": \"Full Body Burn\",\n  \"start_time\": \"{{flow_class_start}}\",\n  \"duration_minutes\": 50,\n  \"spots\": 1,\n  \"credit_cost\": 2\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/classes/", "host": ["{{baseUrl}}"], "path": ["classes", ""] }
+          }
+        },
+        {
+          "name": "Step 08: Staff Grants 10 Credits to Member 1",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const expiry = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();",
+                  "pm.collectionVariables.set('flow_pack_expiry', expiry);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 201 Created', function () { pm.response.to.have.status(201); });",
+                  "var data = pm.response.json();",
+                  "pm.test('Granted 10 credits', function () { pm.expect(data.remaining_credits).to.eql(10); });",
+                  "pm.collectionVariables.set('flow_pack1_id', data.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_staff_token}}", "type": "string" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"member\": {{flow_m1_id}},\n  \"granted_credits\": 10,\n  \"expires_at\": \"{{flow_pack_expiry}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/credit-packs/", "host": ["{{baseUrl}}"], "path": ["credit-packs", ""] }
+          }
+        },
+        {
+          "name": "Step 09: Staff Grants 10 Credits to Member 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 201 Created', function () { pm.response.to.have.status(201); });",
+                  "var data = pm.response.json();",
+                  "pm.collectionVariables.set('flow_pack2_id', data.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_staff_token}}", "type": "string" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"member\": {{flow_m2_id}},\n  \"granted_credits\": 10,\n  \"expires_at\": \"{{flow_pack_expiry}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/credit-packs/", "host": ["{{baseUrl}}"], "path": ["credit-packs", ""] }
+          }
+        },
+        {
+          "name": "Step 10: Member 1 Books Class (Fills Class)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set('flow_idem_key_1', 'idem-book-m1-' + Date.now());"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 201 Created', function () { pm.response.to.have.status(201); });",
+                  "var data = pm.response.json();",
+                  "pm.test('Status is CONFIRMED', function () { pm.expect(data.status).to.eql('CONFIRMED'); });",
+                  "pm.test('Slot allocated', function () { pm.expect(data.slot_number).to.eql(1); });",
+                  "pm.collectionVariables.set('flow_booking1_id', data.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_m1_token}}", "type": "string" }] },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Idempotency-Key", "value": "{{flow_idem_key_1}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fitness_class\": {{flow_class_id}}\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/bookings/", "host": ["{{baseUrl}}"], "path": ["bookings", ""] }
+          }
+        },
+        {
+          "name": "Step 11: Idempotency Replay (Same Key, Returns Existing Booking)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 201 Created (Replay)', function () { pm.response.to.have.status(201); });",
+                  "var data = pm.response.json();",
+                  "pm.test('Returns original booking ID', function () { pm.expect(String(data.id)).to.eql(String(pm.collectionVariables.get('flow_booking1_id'))); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_m1_token}}", "type": "string" }] },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Idempotency-Key", "value": "{{flow_idem_key_1}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fitness_class\": {{flow_class_id}}\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/bookings/", "host": ["{{baseUrl}}"], "path": ["bookings", ""] }
+          }
+        },
+        {
+          "name": "Step 12: Member 2 Books Full Class (Auto Joins Waitlist)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set('flow_idem_key_2', 'idem-book-m2-wl-' + Date.now());"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 201 Created', function () { pm.response.to.have.status(201); });",
+                  "var data = pm.response.json();",
+                  "pm.test('Status is WAITING_LIST', function () { pm.expect(data.status).to.eql('WAITING_LIST'); });",
+                  "pm.test('No slot allocated while waiting', function () { pm.expect(data.slot_number).to.be.null; });",
+                  "pm.collectionVariables.set('flow_booking2_id', data.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_m2_token}}", "type": "string" }] },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Idempotency-Key", "value": "{{flow_idem_key_2}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fitness_class\": {{flow_class_id}}\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/bookings/", "host": ["{{baseUrl}}"], "path": ["bookings", ""] }
+          }
+        },
+        {
+          "name": "Step 13: Verify Member 2 Not Charged on Waitlist",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 OK', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.test('Credits uncharged (still 10)', function () { pm.expect(data.total_credits).to.eql(10); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_m2_token}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/credit-packs/balance/", "host": ["{{baseUrl}}"], "path": ["credit-packs", "balance", ""] }
+          }
+        },
+        {
+          "name": "Step 14: Member 1 Cancels Booking (Before Cutoff)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 OK', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.test('Status is CANCELLED', function () { pm.expect(data.status).to.eql('CANCELLED'); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_m1_token}}", "type": "string" }] },
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/bookings/{{flow_booking1_id}}/", "host": ["{{baseUrl}}"], "path": ["bookings", "{{flow_booking1_id}}", ""] }
+          }
+        },
+        {
+          "name": "Step 15: Verify Member 1 Full Refund",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 OK', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.test('Member 1 balance restored to 10', function () { pm.expect(data.total_credits).to.eql(10); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_m1_token}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/credit-packs/balance/", "host": ["{{baseUrl}}"], "path": ["credit-packs", "balance", ""] }
+          }
+        },
+        {
+          "name": "Step 16: Verify Member 2 Auto-Promoted from Waitlist",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 OK', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.test('Promoted to CONFIRMED', function () { pm.expect(data.status).to.eql('CONFIRMED'); });",
+                  "pm.test('Slot allocated', function () { pm.expect(data.slot_number).to.eql(1); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_m2_token}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/bookings/{{flow_booking2_id}}/", "host": ["{{baseUrl}}"], "path": ["bookings", "{{flow_booking2_id}}", ""] }
+          }
+        },
+        {
+          "name": "Step 17: Verify Member 2 Charged on Promotion",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 OK', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.test('Member 2 balance deducted to 8', function () { pm.expect(data.total_credits).to.eql(8); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_m2_token}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/credit-packs/balance/", "host": ["{{baseUrl}}"], "path": ["credit-packs", "balance", ""] }
+          }
+        },
+        {
+          "name": "Step 18: Audit Ledger Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 OK', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.test('Ledger has transaction movements', function () { pm.expect(data.length).to.be.above(0); });",
+                  "var causes = data.map(function(t) { return t.cause; });",
+                  "pm.test('Includes Grant, Charge, and Refund', function () {",
+                  "  pm.expect(causes).to.include('Credit Pack Grant');",
+                  "  pm.expect(causes).to.include('Booking Charge');",
+                  "  pm.expect(causes).to.include('Cancellation Refund');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_m1_token}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/credit-transactions/", "host": ["{{baseUrl}}"], "path": ["credit-transactions", ""] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Access & Auth (/users/)",
+      "item": [
+        {
+          "name": "1.1 Register Member 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('member1_id', jsonData.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone_number\": \"+919876500001\",\n  \"password_1\": \"MemberPass123!\",\n  \"password_2\": \"MemberPass123!\",\n  \"role\": \"MEMBER\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/users/register/", "host": ["{{baseUrl}}"], "path": ["users", "register", ""] }
+          }
+        },
+        {
+          "name": "1.2 Login Member 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('member1_access', jsonData.access);",
+                  "pm.collectionVariables.set('member1_refresh', jsonData.refresh);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone_number\": \"+919876500001\",\n  \"password\": \"MemberPass123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/users/login/", "host": ["{{baseUrl}}"], "path": ["users", "login", ""] }
+          }
+        },
+        {
+          "name": "1.3 Register Member 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('member2_id', jsonData.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone_number\": \"+919876500002\",\n  \"password_1\": \"MemberPass123!\",\n  \"password_2\": \"MemberPass123!\",\n  \"role\": \"MEMBER\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/users/register/", "host": ["{{baseUrl}}"], "path": ["users", "register", ""] }
+          }
+        },
+        {
+          "name": "1.4 Login Member 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('member2_access', jsonData.access);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone_number\": \"+919876500002\",\n  \"password\": \"MemberPass123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/users/login/", "host": ["{{baseUrl}}"], "path": ["users", "login", ""] }
+          }
+        },
+        {
+          "name": "1.5 Login Staff User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('staff_access', jsonData.access);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone_number\": \"+919876500000\",\n  \"password\": \"AdminPass123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/users/login/", "host": ["{{baseUrl}}"], "path": ["users", "login", ""] }
+          }
+        },
+        {
+          "name": "1.6 Refresh JWT Token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{member1_refresh}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/users/token/refresh/", "host": ["{{baseUrl}}"], "path": ["users", "token", "refresh", ""] }
+          }
+        },
+        {
+          "name": "1.7 Get Current User Profile (Me)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/users/me/", "host": ["{{baseUrl}}"], "path": ["users", "me", ""] }
+          }
+        },
+        {
+          "name": "1.8 List Users (Staff Only)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staff_access}}", "type": "string" }] },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/users/?role=MEMBER",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", ""],
+              "query": [{ "key": "role", "value": "MEMBER" }]
+            }
+          }
+        },
+        {
+          "name": "1.9 Retrieve User by ID (Staff Only)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staff_access}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/users/{{member1_id}}/", "host": ["{{baseUrl}}"], "path": ["users", "{{member1_id}}", ""] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Studios & Classes (/studios/, /classes/)",
+      "item": [
+        {
+          "name": "2.1 Create Studio (Staff)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('studio_id', jsonData.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staff_access}}", "type": "string" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Downtown Pilates Studio\",\n  \"timezone\": \"America/New_York\",\n  \"cancellation_cutoff_hours\": 4\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/studios/", "host": ["{{baseUrl}}"], "path": ["studios", ""] }
+          }
+        },
+        {
+          "name": "2.2 List Studios",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/studios/", "host": ["{{baseUrl}}"], "path": ["studios", ""] }
+          }
+        },
+        {
+          "name": "2.3 Retrieve Studio by ID",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/studios/{{studio_id}}/", "host": ["{{baseUrl}}"], "path": ["studios", "{{studio_id}}", ""] }
+          }
+        },
+        {
+          "name": "2.4 Schedule Class (Staff)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('class_id', jsonData.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staff_access}}", "type": "string" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studio\": {{studio_id}},\n  \"name\": \"Kettlebell Foundations\",\n  \"start_time\": \"2026-10-20T10:00:00Z\",\n  \"duration_minutes\": 50,\n  \"spots\": 1,\n  \"credit_cost\": 2\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/classes/", "host": ["{{baseUrl}}"], "path": ["classes", ""] }
+          }
+        },
+        {
+          "name": "2.5 Browse Classes with Date Filter",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/classes/?start_date=2026-10-15&end_date=2026-10-25",
+              "host": ["{{baseUrl}}"],
+              "path": ["classes", ""],
+              "query": [
+                { "key": "start_date", "value": "2026-10-15" },
+                { "key": "end_date", "value": "2026-10-25" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.6 Retrieve Class by ID",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/classes/{{class_id}}/", "host": ["{{baseUrl}}"], "path": ["classes", "{{class_id}}", ""] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Credit Packs & Balances (/credit-packs/, /credit-transactions/)",
+      "item": [
+        {
+          "name": "3.1 Grant Credit Pack to Member 1 (Staff)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('pack1_id', jsonData.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staff_access}}", "type": "string" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"member\": {{member1_id}},\n  \"granted_credits\": 10,\n  \"expires_at\": \"2026-11-20T00:00:00Z\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/credit-packs/", "host": ["{{baseUrl}}"], "path": ["credit-packs", ""] }
+          }
+        },
+        {
+          "name": "3.2 Grant Credit Pack to Member 2 (Staff)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staff_access}}", "type": "string" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"member\": {{member2_id}},\n  \"granted_credits\": 5,\n  \"expires_at\": \"2026-11-20T00:00:00Z\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/credit-packs/", "host": ["{{baseUrl}}"], "path": ["credit-packs", ""] }
+          }
+        },
+        {
+          "name": "3.3 List Credit Packs",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/credit-packs/", "host": ["{{baseUrl}}"], "path": ["credit-packs", ""] }
+          }
+        },
+        {
+          "name": "3.4 Retrieve Credit Pack by ID",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/credit-packs/{{pack1_id}}/", "host": ["{{baseUrl}}"], "path": ["credit-packs", "{{pack1_id}}", ""] }
+          }
+        },
+        {
+          "name": "3.5 Get Member 1 Current Balance Breakdown",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/credit-packs/balance/", "host": ["{{baseUrl}}"], "path": ["credit-packs", "balance", ""] }
+          }
+        },
+        {
+          "name": "3.6 Reconstruct Balance as of Past Moment",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/credit-packs/balance/?as_of=2026-10-14T00:00:00Z",
+              "host": ["{{baseUrl}}"],
+              "path": ["credit-packs", "balance", ""],
+              "query": [{ "key": "as_of", "value": "2026-10-14T00:00:00Z" }]
+            }
+          }
+        },
+        {
+          "name": "3.7 View Credit Ledger Movements",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.length > 0) { pm.collectionVariables.set('tx_id', jsonData[0].id); }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/credit-transactions/", "host": ["{{baseUrl}}"], "path": ["credit-transactions", ""] }
+          }
+        },
+        {
+          "name": "3.8 Retrieve Single Transaction by ID",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/credit-transactions/{{tx_id}}/", "host": ["{{baseUrl}}"], "path": ["credit-transactions", "{{tx_id}}", ""] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Bookings & Waitlist (/bookings/)",
+      "item": [
+        {
+          "name": "4.1 Member 1 Books Class (Confirmed + Slot Allocated)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('booking1_id', jsonData.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Idempotency-Key", "value": "idem-key-member1-book-001" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fitness_class\": {{class_id}}\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/bookings/", "host": ["{{baseUrl}}"], "path": ["bookings", ""] }
+          }
+        },
+        {
+          "name": "4.2 Retry Booking with Same Idempotency-Key (Replay)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Idempotency-Key", "value": "idem-key-member1-book-001" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fitness_class\": {{class_id}}\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/bookings/", "host": ["{{baseUrl}}"], "path": ["bookings", ""] }
+          }
+        },
+        {
+          "name": "4.3 Member 2 Books Full Class (Auto Joins Waitlist)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('waitlist_booking_id', jsonData.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member2_access}}", "type": "string" }] },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Idempotency-Key", "value": "idem-key-member2-waitlist-001" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fitness_class\": {{class_id}}\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/bookings/", "host": ["{{baseUrl}}"], "path": ["bookings", ""] }
+          }
+        },
+        {
+          "name": "4.4 List Member Bookings",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/bookings/", "host": ["{{baseUrl}}"], "path": ["bookings", ""] }
+          }
+        },
+        {
+          "name": "4.5 Filter Waitlist Entries (?status=WAITING_LIST)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member2_access}}", "type": "string" }] },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/bookings/?status=WAITING_LIST",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", ""],
+              "query": [{ "key": "status", "value": "WAITING_LIST" }]
+            }
+          }
+        },
+        {
+          "name": "4.6 Retrieve Booking by ID (With slot_number)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/bookings/{{booking1_id}}/", "host": ["{{baseUrl}}"], "path": ["bookings", "{{booking1_id}}", ""] }
+          }
+        },
+        {
+          "name": "4.7 Member 1 Cancels Booking (Triggers Refund & Waitlist Promo)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/bookings/{{booking1_id}}/", "host": ["{{baseUrl}}"], "path": ["bookings", "{{booking1_id}}", ""] }
+          }
+        },
+        {
+          "name": "4.8 Member 1 Checks Refunded Balance",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/credit-packs/balance/", "host": ["{{baseUrl}}"], "path": ["credit-packs", "balance", ""] }
+          }
+        },
+        {
+          "name": "4.9 Member 2 Checks Bookings (Auto-Promoted to CONFIRMED with Slot)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member2_access}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/bookings/", "host": ["{{baseUrl}}"], "path": ["bookings", ""] }
+          }
+        },
+        {
+          "name": "4.10 Leave Waitlist / Cancel Booking",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member2_access}}", "type": "string" }] },
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/bookings/{{waitlist_booking_id}}/", "host": ["{{baseUrl}}"], "path": ["bookings", "{{waitlist_booking_id}}", ""] }
+          }
+        }
+      ]
+    }
+  ]
+}

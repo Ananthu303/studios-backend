@@ -1,0 +1,22 @@
+services:
+  web:
+    build: .
+    container_name: studio_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DJANGO_SETTINGS_MODULE=config.settings
+    volumes:
+      - .:/app
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+
+  test:
+    build: .
+    container_name: studio_test
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DJANGO_SETTINGS_MODULE=config.settings
+    volumes:
+      - .:/app
+    command: python manage.py test

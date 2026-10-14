@@ -1,4 +1,5 @@
 from datetime import timedelta
+
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
@@ -11,13 +12,13 @@ from studios.models import FitnessClass, Studio
 class StudioTests(APITestCase):
     def setUp(self):
         self.staff_user = User.objects.create_user(
-            phone_number="+15551111111",
+            phone_number="+919876500000",
             password="staffpassword123",
             role=User.Role.STAFF,
             is_staff=True,
         )
         self.member_user = User.objects.create_user(
-            phone_number="+15552222222",
+            phone_number="+919876500001",
             password="memberpassword123",
             role=User.Role.MEMBER,
         )

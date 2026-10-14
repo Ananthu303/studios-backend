@@ -7,6 +7,8 @@ from .models import FitnessClass, Studio
 
 
 class StudioSerializer(serializers.ModelSerializer):
+    timezone = serializers.CharField(required=False)
+
     class Meta:
         model = Studio
         fields = [

@@ -1,7 +1,6 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from rest_framework_simplejwt.tokens import RefreshToken
 
 from accounts.models import User
 
@@ -9,17 +8,17 @@ from accounts.models import User
 class AccountsTests(APITestCase):
     def setUp(self):
         self.superadmin = User.objects.create_superuser(
-            phone_number="+15550000000",
+            phone_number="+919876500000",
             password="adminpassword123",
         )
         self.staff_user = User.objects.create_user(
-            phone_number="+15551111111",
+            phone_number="+919876500001",
             password="staffpassword123",
             role=User.Role.STAFF,
             is_staff=True,
         )
         self.member_user = User.objects.create_user(
-            phone_number="+15552222222",
+            phone_number="+919876500002",
             password="memberpassword123",
             role=User.Role.MEMBER,
         )
@@ -27,19 +26,19 @@ class AccountsTests(APITestCase):
     def test_member_registration(self):
         url = reverse("users-register")
         data = {
-            "phone_number": "+15553333333",
+            "phone_number": "+919876500003",
             "password_1": "securepass123",
             "password_2": "securepass123",
             "role": "MEMBER",
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertTrue(User.objects.filter(phone_number="+15553333333").exists())
+        self.assertTrue(User.objects.filter(phone_number="+919876500003").exists())
 
     def test_non_admin_cannot_register_staff(self):
         url = reverse("users-register")
         data = {
-            "phone_number": "+15554444444",
+            "phone_number": "+919876500004",
             "password_1": "securepass123",
             "password_2": "securepass123",
             "role": "STAFF",
@@ -51,7 +50,7 @@ class AccountsTests(APITestCase):
         self.client.force_authenticate(user=self.superadmin)
         url = reverse("users-register")
         data = {
-            "phone_number": "+15554444444",
+            "phone_number": "+919876500004",
             "password_1": "securepass123",
             "password_2": "securepass123",
             "role": "STAFF",
@@ -65,7 +64,7 @@ class AccountsTests(APITestCase):
         response = self.client.post(
             login_url,
             {
-                "phone_number": "+15552222222",
+                "phone_number": "+919876500002",
                 "password": "memberpassword123",
             },
         )
@@ -84,7 +83,7 @@ class AccountsTests(APITestCase):
         url = reverse("users-me")
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["phone_number"], "+15552222222")
+        self.assertEqual(response.data["phone_number"], "+919876500002")
 
     def test_user_isolation(self):
         # Member can only see self in users list

@@ -13,12 +13,12 @@ class Booking(models.Model):
 
     member = models.ForeignKey(
         User,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name="bookings",
     )
     fitness_class = models.ForeignKey(
         FitnessClass,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name="bookings",
     )
     status = models.CharField(

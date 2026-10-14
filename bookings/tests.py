@@ -1,5 +1,7 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
+from unittest.mock import patch
 from zoneinfo import ZoneInfo
+
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
@@ -7,11 +9,7 @@ from rest_framework.test import APITestCase
 
 from accounts.models import User
 from bookings.models import Booking
-from bookings.services import (
-    cancel_booking,
-    create_booking,
-)
-from credits.models import CreditPack, Transaction
+from bookings.services import cancel_booking, create_booking
 from credits.services import grant_credit_pack
 from studios.models import FitnessClass, Studio
 
@@ -19,23 +17,23 @@ from studios.models import FitnessClass, Studio
 class BookingsTests(APITestCase):
     def setUp(self):
         self.staff_user = User.objects.create_user(
-            phone_number="+15551111111",
+            phone_number="+919876500000",
             password="staffpassword123",
             role=User.Role.STAFF,
             is_staff=True,
         )
         self.member1 = User.objects.create_user(
-            phone_number="+15552222222",
+            phone_number="+919876500001",
             password="memberpassword123",
             role=User.Role.MEMBER,
         )
         self.member2 = User.objects.create_user(
-            phone_number="+15553333333",
+            phone_number="+919876500002",
             password="memberpassword123",
             role=User.Role.MEMBER,
         )
         self.member3 = User.objects.create_user(
-            phone_number="+15554444444",
+            phone_number="+919876500003",
             password="memberpassword123",
             role=User.Role.MEMBER,
         )
@@ -110,6 +108,27 @@ class BookingsTests(APITestCase):
         self.pack1.refresh_from_db()
         self.assertEqual(self.pack1.remaining_credits, 8)
 
+    def test_duplicate_booking_different_key_returns_400(self):
+        self.client.force_authenticate(user=self.member1)
+        url = reverse("booking-list")
+
+        # First booking succeeds
+        resp1 = self.client.post(
+            url,
+            {"fitness_class": self.fitness_class.id},
+            HTTP_IDEMPOTENCY_KEY="key-booking-first",
+        )
+        self.assertEqual(resp1.status_code, status.HTTP_201_CREATED)
+
+        # Second booking for same class with different key returns 400 Bad Request
+        resp2 = self.client.post(
+            url,
+            {"fitness_class": self.fitness_class.id},
+            HTTP_IDEMPOTENCY_KEY="key-booking-second",
+        )
+        self.assertEqual(resp2.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("already have an active booking", str(resp2.data))
+
     def test_insufficient_credits_fails(self):
         # Member 3 has 0 credits
         self.client.force_authenticate(user=self.member3)
@@ -121,7 +140,9 @@ class BookingsTests(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(
-            Booking.objects.filter(member=self.member3, fitness_class=self.fitness_class).exists()
+            Booking.objects.filter(
+                member=self.member3, fitness_class=self.fitness_class
+            ).exists()
         )
 
     def test_class_full_waitlist_and_promotion_on_cancellation(self):
@@ -133,11 +154,11 @@ class BookingsTests(APITestCase):
         )
         self.assertEqual(booking1.status, Booking.Status.CONFIRMED)
 
-        # 2. Member 2 joins waitlist via waitlist API
+        # 2. Member 2 joins waitlist by booking full class
         self.client.force_authenticate(user=self.member2)
-        waitlist_url = reverse("waitlist-list")
+        booking_url = reverse("booking-list")
         resp_wl = self.client.post(
-            waitlist_url,
+            booking_url,
             {"fitness_class": self.fitness_class.id},
             HTTP_IDEMPOTENCY_KEY="key-m2-wl",
         )
@@ -156,7 +177,9 @@ class BookingsTests(APITestCase):
         self.assertEqual(self.pack1.remaining_credits, 10)
 
         # Member 2 promoted to CONFIRMED and charged
-        booking2 = Booking.objects.get(member=self.member2, fitness_class=self.fitness_class)
+        booking2 = Booking.objects.get(
+            member=self.member2, fitness_class=self.fitness_class
+        )
         self.assertEqual(booking2.status, Booking.Status.CONFIRMED)
         self.pack2.refresh_from_db()
         self.assertEqual(self.pack2.remaining_credits, 8)
@@ -220,7 +243,9 @@ class BookingsTests(APITestCase):
         )
 
         # Member 1 cancels confirmed booking
-        booking1 = Booking.objects.get(member=self.member1, fitness_class=self.fitness_class)
+        booking1 = Booking.objects.get(
+            member=self.member1, fitness_class=self.fitness_class
+        )
         cancel_booking(member=self.member1, booking_id=booking1.id)
 
         # Member 3 kept in WAITING_LIST (cannot afford)
@@ -254,3 +279,58 @@ class BookingsTests(APITestCase):
 
         wl_booking.refresh_from_db()
         self.assertEqual(wl_booking.status, Booking.Status.CANCELLED)
+
+    def test_cutoff_measured_in_studio_local_time(self):
+        ny_studio = Studio.objects.create(
+            name="SoHo Pilates",
+            timezone="America/New_York",
+            cancellation_cutoff_hours=4,
+        )
+        ny_tz = ZoneInfo("America/New_York")
+
+        # Class 1: Starts at 14:00 EDT (Cutoff is 10:00 EDT)
+        class_1 = FitnessClass.objects.create(
+            studio=ny_studio,
+            name="Early Reformer",
+            start_time=datetime(2026, 10, 25, 14, 0, 0, tzinfo=ny_tz),
+            duration_minutes=50,
+            spots=5,
+            credit_cost=2,
+        )
+
+        # Member 1 books Class 1 (10 -> 8 credits)
+        booking1 = create_booking(self.member1, class_1.id, "tz-test-key-1")
+        self.pack1.refresh_from_db()
+        self.assertEqual(self.pack1.remaining_credits, 8)
+
+        # Cancel 1 minute before cutoff (09:59 EDT) -> Refunded in full
+        before_cutoff = datetime(2026, 10, 25, 9, 59, 0, tzinfo=ny_tz)
+        with patch("django.utils.timezone.now", return_value=before_cutoff):
+            cancel_booking(self.member1, booking1.id)
+
+        self.pack1.refresh_from_db()
+        self.assertEqual(self.pack1.remaining_credits, 10)
+
+        # Class 2: Starts at 12:00 EDT (Cutoff was 08:00 EDT)
+        class_2 = FitnessClass.objects.create(
+            studio=ny_studio,
+            name="Late Reformer",
+            start_time=datetime(2026, 10, 25, 12, 0, 0, tzinfo=ny_tz),
+            duration_minutes=50,
+            spots=5,
+            credit_cost=2,
+        )
+
+        # Member 1 books Class 2 (10 -> 8 credits)
+        booking2 = create_booking(self.member1, class_2.id, "tz-test-key-2")
+        self.pack1.refresh_from_db()
+        self.assertEqual(self.pack1.remaining_credits, 8)
+
+        # Cancel 1 hour after cutoff (09:00 EDT) -> Forfeited
+        after_cutoff = datetime(2026, 10, 25, 9, 0, 0, tzinfo=ny_tz)
+        with patch("django.utils.timezone.now", return_value=after_cutoff):
+            cancel_booking(self.member1, booking2.id)
+
+        # Credits forfeited (remains 8)
+        self.pack1.refresh_from_db()
+        self.assertEqual(self.pack1.remaining_credits, 8)

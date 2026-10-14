@@ -1,0 +1,17 @@
+# Core Django & DRF
+Django==5.2.18
+djangorestframework==3.18.3
+djangorestframework-simplejwt==5.5.1
+django-filter==26.2
+django-phonenumber-field==8.5.0
+phonenumbers==9.0.41
+django-timezone-field==7.2.2
+psycopg[binary]==3.3.6
+python-dotenv==1.2.4
+tzdata==2026.5
+
+# Code Quality & Static Analysis
+ruff>=0.8.0
+mypy>=1.13.0
+django-stubs>=5.1.0
+djangorestframework-stubs>=3.15.0

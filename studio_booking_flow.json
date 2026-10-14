@@ -1,0 +1,288 @@
+{
+  "name": "Studio Fitness Booking End-to-End Flow",
+  "description": "Visual Postman Flow canvas definition for Studio booking core: Authentication -> Studio & Class Setup -> Credit Grants -> Booking & Waitlist -> Cutoff Cancellation -> Auto Promotion -> Ledger Audit.",
+  "version": "1.0.0",
+  "entrypoint": "start-node",
+  "nodes": [
+    {
+      "id": "start-node",
+      "type": "Start",
+      "name": "Start Flow",
+      "position": { "x": 50, "y": 200 },
+      "outputs": ["exec"]
+    },
+    {
+      "id": "step-01-login-staff",
+      "type": "SendRequest",
+      "name": "Step 01: Login Staff",
+      "position": { "x": 300, "y": 200 },
+      "data": {
+        "collection": "Studio Fitness Booking API - End to End Collection & Flows",
+        "folder": "0. End-to-End Core Booking Flow (1-Click Automated Runner)",
+        "request": "Step 01: Login Staff User"
+      },
+      "inputs": ["exec"],
+      "outputs": ["success", "error", "response"]
+    },
+    {
+      "id": "eval-staff-token",
+      "type": "Evaluate",
+      "name": "Extract Staff Token",
+      "position": { "x": 580, "y": 200 },
+      "data": {
+        "expression": "body.access"
+      },
+      "inputs": ["input"],
+      "outputs": ["output"]
+    },
+    {
+      "id": "step-02-register-m1",
+      "type": "SendRequest",
+      "name": "Step 02: Register Member 1",
+      "position": { "x": 840, "y": 200 },
+      "data": {
+        "collection": "Studio Fitness Booking API - End to End Collection & Flows",
+        "folder": "0. End-to-End Core Booking Flow (1-Click Automated Runner)",
+        "request": "Step 02: Register Member 1 (Dynamic Phone)"
+      },
+      "inputs": ["exec"],
+      "outputs": ["success", "error", "response"]
+    },
+    {
+      "id": "step-03-login-m1",
+      "type": "SendRequest",
+      "name": "Step 03: Login Member 1",
+      "position": { "x": 1120, "y": 200 },
+      "data": {
+        "collection": "Studio Fitness Booking API - End to End Collection & Flows",
+        "folder": "0. End-to-End Core Booking Flow (1-Click Automated Runner)",
+        "request": "Step 03: Login Member 1"
+      },
+      "inputs": ["exec"],
+      "outputs": ["success", "error", "response"]
+    },
+    {
+      "id": "step-04-register-m2",
+      "type": "SendRequest",
+      "name": "Step 04: Register Member 2",
+      "position": { "x": 1400, "y": 200 },
+      "data": {
+        "collection": "Studio Fitness Booking API - End to End Collection & Flows",
+        "folder": "0. End-to-End Core Booking Flow (1-Click Automated Runner)",
+        "request": "Step 04: Register Member 2 (Dynamic Phone)"
+      },
+      "inputs": ["exec"],
+      "outputs": ["success", "error", "response"]
+    },
+    {
+      "id": "step-05-login-m2",
+      "type": "SendRequest",
+      "name": "Step 05: Login Member 2",
+      "position": { "x": 1680, "y": 200 },
+      "data": {
+        "collection": "Studio Fitness Booking API - End to End Collection & Flows",
+        "folder": "0. End-to-End Core Booking Flow (1-Click Automated Runner)",
+        "request": "Step 05: Login Member 2"
+      },
+      "inputs": ["exec"],
+      "outputs": ["success", "error", "response"]
+    },
+    {
+      "id": "step-06-create-studio",
+      "type": "SendRequest",
+      "name": "Step 06: Staff Creates Studio",
+      "position": { "x": 300, "y": 450 },
+      "data": {
+        "collection": "Studio Fitness Booking API - End to End Collection & Flows",
+        "folder": "0. End-to-End Core Booking Flow (1-Click Automated Runner)",
+        "request": "Step 06: Staff Creates Studio"
+      },
+      "inputs": ["exec"],
+      "outputs": ["success", "error", "response"]
+    },
+    {
+      "id": "step-07-schedule-class",
+      "type": "SendRequest",
+      "name": "Step 07: Staff Schedules Class (1 Spot, Cost 2)",
+      "position": { "x": 580, "y": 450 },
+      "data": {
+        "collection": "Studio Fitness Booking API - End to End Collection & Flows",
+        "folder": "0. End-to-End Core Booking Flow (1-Click Automated Runner)",
+        "request": "Step 07: Staff Schedules Class (1 Spot, Cost 2 Credits)"
+      },
+      "inputs": ["exec"],
+      "outputs": ["success", "error", "response"]
+    },
+    {
+      "id": "step-08-grant-m1-credits",
+      "type": "SendRequest",
+      "name": "Step 08: Staff Grants 10 Credits to M1",
+      "position": { "x": 840, "y": 450 },
+      "data": {
+        "collection": "Studio Fitness Booking API - End to End Collection & Flows",
+        "folder": "0. End-to-End Core Booking Flow (1-Click Automated Runner)",
+        "request": "Step 08: Staff Grants 10 Credits to Member 1"
+      },
+      "inputs": ["exec"],
+      "outputs": ["success", "error", "response"]
+    },
+    {
+      "id": "step-09-grant-m2-credits",
+      "type": "SendRequest",
+      "name": "Step 09: Staff Grants 10 Credits to M2",
+      "position": { "x": 1120, "y": 450 },
+      "data": {
+        "collection": "Studio Fitness Booking API - End to End Collection & Flows",
+        "folder": "0. End-to-End Core Booking Flow (1-Click Automated Runner)",
+        "request": "Step 09: Staff Grants 10 Credits to Member 2"
+      },
+      "inputs": ["exec"],
+      "outputs": ["success", "error", "response"]
+    },
+    {
+      "id": "step-10-m1-book-class",
+      "type": "SendRequest",
+      "name": "Step 10: Member 1 Books Class (Fills Spot)",
+      "position": { "x": 1400, "y": 450 },
+      "data": {
+        "collection": "Studio Fitness Booking API - End to End Collection & Flows",
+        "folder": "0. End-to-End Core Booking Flow (1-Click Automated Runner)",
+        "request": "Step 10: Member 1 Books Class (Fills Class)"
+      },
+      "inputs": ["exec"],
+      "outputs": ["success", "error", "response"]
+    },
+    {
+      "id": "step-11-idempotency-replay",
+      "type": "SendRequest",
+      "name": "Step 11: Idempotency Replay (Same Key)",
+      "position": { "x": 1680, "y": 450 },
+      "data": {
+        "collection": "Studio Fitness Booking API - End to End Collection & Flows",
+        "folder": "0. End-to-End Core Booking Flow (1-Click Automated Runner)",
+        "request": "Step 11: Idempotency Replay (Same Key, Returns Existing Booking)"
+      },
+      "inputs": ["exec"],
+      "outputs": ["success", "error", "response"]
+    },
+    {
+      "id": "step-12-m2-waitlist",
+      "type": "SendRequest",
+      "name": "Step 12: Member 2 Joins Waitlist",
+      "position": { "x": 300, "y": 700 },
+      "data": {
+        "collection": "Studio Fitness Booking API - End to End Collection & Flows",
+        "folder": "0. End-to-End Core Booking Flow (1-Click Automated Runner)",
+        "request": "Step 12: Member 2 Books Full Class (Auto Joins Waitlist)"
+      },
+      "inputs": ["exec"],
+      "outputs": ["success", "error", "response"]
+    },
+    {
+      "id": "step-13-verify-m2-uncharged",
+      "type": "SendRequest",
+      "name": "Step 13: Verify M2 Not Charged (Balance 10)",
+      "position": { "x": 580, "y": 700 },
+      "data": {
+        "collection": "Studio Fitness Booking API - End to End Collection & Flows",
+        "folder": "0. End-to-End Core Booking Flow (1-Click Automated Runner)",
+        "request": "Step 13: Verify Member 2 Not Charged on Waitlist"
+      },
+      "inputs": ["exec"],
+      "outputs": ["success", "error", "response"]
+    },
+    {
+      "id": "step-14-m1-cancel-booking",
+      "type": "SendRequest",
+      "name": "Step 14: Member 1 Cancels Booking",
+      "position": { "x": 840, "y": 700 },
+      "data": {
+        "collection": "Studio Fitness Booking API - End to End Collection & Flows",
+        "folder": "0. End-to-End Core Booking Flow (1-Click Automated Runner)",
+        "request": "Step 14: Member 1 Cancels Booking (Before Cutoff)"
+      },
+      "inputs": ["exec"],
+      "outputs": ["success", "error", "response"]
+    },
+    {
+      "id": "step-15-verify-m1-refund",
+      "type": "SendRequest",
+      "name": "Step 15: Verify M1 Refund (Balance Restored to 10)",
+      "position": { "x": 1120, "y": 700 },
+      "data": {
+        "collection": "Studio Fitness Booking API - End to End Collection & Flows",
+        "folder": "0. End-to-End Core Booking Flow (1-Click Automated Runner)",
+        "request": "Step 15: Verify Member 1 Full Refund"
+      },
+      "inputs": ["exec"],
+      "outputs": ["success", "error", "response"]
+    },
+    {
+      "id": "step-16-verify-m2-promoted",
+      "type": "SendRequest",
+      "name": "Step 16: Verify M2 Auto-Promoted to CONFIRMED",
+      "position": { "x": 1400, "y": 700 },
+      "data": {
+        "collection": "Studio Fitness Booking API - End to End Collection & Flows",
+        "folder": "0. End-to-End Core Booking Flow (1-Click Automated Runner)",
+        "request": "Step 16: Verify Member 2 Auto-Promoted from Waitlist"
+      },
+      "inputs": ["exec"],
+      "outputs": ["success", "error", "response"]
+    },
+    {
+      "id": "step-17-verify-m2-deducted",
+      "type": "SendRequest",
+      "name": "Step 17: Verify M2 Deducted to 8",
+      "position": { "x": 1680, "y": 700 },
+      "data": {
+        "collection": "Studio Fitness Booking API - End to End Collection & Flows",
+        "folder": "0. End-to-End Core Booking Flow (1-Click Automated Runner)",
+        "request": "Step 17: Verify Member 2 Charged on Promotion"
+      },
+      "inputs": ["exec"],
+      "outputs": ["success", "error", "response"]
+    },
+    {
+      "id": "step-18-ledger-check",
+      "type": "SendRequest",
+      "name": "Step 18: Audit Ledger Check",
+      "position": { "x": 950, "y": 920 },
+      "data": {
+        "collection": "Studio Fitness Booking API - End to End Collection & Flows",
+        "folder": "0. End-to-End Core Booking Flow (1-Click Automated Runner)",
+        "request": "Step 18: Audit Ledger Check"
+      },
+      "inputs": ["exec"],
+      "outputs": ["success", "error", "response"]
+    },
+    {
+      "id": "display-result",
+      "type": "Display",
+      "name": "Final Flow Summary",
+      "position": { "x": 1250, "y": 920 },
+      "inputs": ["input"]
+    }
+  ],
+  "edges": [
+    { "source": "start-node", "target": "step-01-login-staff", "sourcePort": "exec", "targetPort": "exec" },
+    { "source": "step-01-login-staff", "target": "step-02-register-m1", "sourcePort": "success", "targetPort": "exec" },
+    { "source": "step-02-register-m1", "target": "step-03-login-m1", "sourcePort": "success", "targetPort": "exec" },
+    { "source": "step-03-login-m1", "target": "step-04-register-m2", "sourcePort": "success", "targetPort": "exec" },
+    { "source": "step-04-register-m2", "target": "step-05-login-m2", "sourcePort": "success", "targetPort": "exec" },
+    { "source": "step-05-login-m2", "target": "step-06-create-studio", "sourcePort": "success", "targetPort": "exec" },
+    { "source": "step-06-create-studio", "target": "step-07-schedule-class", "sourcePort": "success", "targetPort": "exec" },
+    { "source": "step-07-schedule-class", "target": "step-08-grant-m1-credits", "sourcePort": "success", "targetPort": "exec" },
+    { "source": "step-08-grant-m1-credits", "target": "step-09-grant-m2-credits", "sourcePort": "success", "targetPort": "exec" },
+    { "source": "step-09-grant-m2-credits", "target": "step-10-m1-book-class", "sourcePort": "success", "targetPort": "exec" },
+    { "source": "step-10-m1-book-class", "target": "step-11-idempotency-replay", "sourcePort": "success", "targetPort": "exec" },
+    { "source": "step-11-idempotency-replay", "target": "step-12-m2-waitlist", "sourcePort": "success", "targetPort": "exec" },
+    { "source": "step-12-m2-waitlist", "target": "step-13-verify-m2-uncharged", "sourcePort": "success", "targetPort": "exec" },
+    { "source": "step-13-verify-m2-uncharged", "target": "step-14-m1-cancel-booking", "sourcePort": "success", "targetPort": "exec" },
+    { "source": "step-14-m1-cancel-booking", "target": "step-15-verify-m1-refund", "sourcePort": "success", "targetPort": "exec" },
+    { "source": "step-15-verify-m1-refund", "target": "step-16-verify-m2-promoted", "sourcePort": "success", "targetPort": "exec" },
+    { "source": "step-16-verify-m2-promoted", "target": "step-17-verify-m2-deducted", "sourcePort": "success", "targetPort": "exec" },
+    { "source": "step-17-verify-m2-deducted", "target": "step-18-ledger-check", "sourcePort": "success", "targetPort": "exec" },
+    { "source": "step-18-ledger-check", "target": "display-result", "sourcePort": "response", "targetPort": "input" }
+  ]
+}

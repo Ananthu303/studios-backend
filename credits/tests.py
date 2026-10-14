@@ -1,31 +1,32 @@
 from datetime import timedelta
+
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from accounts.models import User
+from bookings.models import Booking
 from credits.models import CreditPack, Transaction
 from credits.services import deduct_credits, grant_credit_pack
-from bookings.models import Booking
 from studios.models import FitnessClass, Studio
 
 
 class CreditsTests(APITestCase):
     def setUp(self):
         self.staff_user = User.objects.create_user(
-            phone_number="+15551111111",
+            phone_number="+919876500000",
             password="staffpassword123",
             role=User.Role.STAFF,
             is_staff=True,
         )
         self.member1 = User.objects.create_user(
-            phone_number="+15552222222",
+            phone_number="+919876500001",
             password="memberpassword123",
             role=User.Role.MEMBER,
         )
         self.member2 = User.objects.create_user(
-            phone_number="+15553333333",
+            phone_number="+919876500002",
             password="memberpassword123",
             role=User.Role.MEMBER,
         )
@@ -126,10 +127,18 @@ class CreditsTests(APITestCase):
         self.assertEqual(pack2.remaining_credits, 1)
         self.assertEqual(pack1.remaining_credits, 5)
 
-        # Spend another 3 credits (1 from pack2, 2 from pack1)
+        # Spend another 3 credits (1 from pack2, 2 from pack1) on a second class
+        class2 = FitnessClass.objects.create(
+            studio=self.studio,
+            name="Cycling 102",
+            start_time=now + timedelta(days=3),
+            duration_minutes=45,
+            spots=10,
+            credit_cost=3,
+        )
         booking2 = Booking.objects.create(
             member=self.member1,
-            fitness_class=self.fitness_class,
+            fitness_class=class2,
             status=Booking.Status.CONFIRMED,
         )
         deduct_credits(member=self.member1, booking=booking2, credits=3)
