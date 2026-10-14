@@ -63,7 +63,7 @@ class LoginSerializer(serializers.Serializer):
         try:
             user = User.objects.get(phone_number=attrs["phone_number"])
         except User.DoesNotExist:
-            raise serializers.ValidationError(
+            raise serializers.ValidationError(  # noqa: B904
                 {"detail": "Invalid phone number or password."}
             )
         if not user.check_password(attrs["password"]):
@@ -90,4 +90,4 @@ class TokenRefreshInputSerializer(serializers.Serializer):
             refresh_token = RefreshToken(value)
             return str(refresh_token.access_token)
         except TokenError:
-            raise NotAuthenticated("Invalid or expired refresh token.")
+            raise NotAuthenticated("Invalid or expired refresh token.")  # noqa: B904

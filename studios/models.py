@@ -49,7 +49,7 @@ class FitnessClass(TimeStampedModel):
         return self.start_time + timedelta(minutes=self.duration_minutes)
 
     @property
-    def spots_available(self) -> int:
+    def spots_available(self):
         return max(self.spots - self.confirmed_count, 0)
 
     def __str__(self):

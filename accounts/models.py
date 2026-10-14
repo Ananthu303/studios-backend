@@ -44,7 +44,7 @@ class User(AbstractUser):
         return str(self.phone_number)
 
     @property
-    def is_studio_staff(self) -> bool:
+    def is_studio_staff(self):
         return self.role in (self.Role.STAFF, self.Role.SUPER_ADMIN)
 
 

@@ -1,6 +1,8 @@
-from accounts.models import User
 from django.db import models
-from django.db.models import F, Q
+from django.utils import timezone
+
+from accounts.models import User
+from bookings.models import Booking
 
 
 class CreditPack(models.Model):
@@ -11,26 +13,24 @@ class CreditPack(models.Model):
     )
     granted_credits = models.PositiveIntegerField()
     remaining_credits = models.PositiveIntegerField()
-    granted_at = models.DateTimeField(auto_now_add=True)
+    granted_at = models.DateTimeField(default=timezone.now)
     expires_at = models.DateTimeField()
 
     class Meta:
         ordering = ["expires_at", "granted_at"]
-        constraints = [
-            models.CheckConstraint(
-                condition=Q(granted_credits__gt=0),
-                name="credit_pack_granted_positive",
-            ),
-            models.CheckConstraint(
-                condition=Q(
-                    remaining_credits__lte=F("granted_credits"),
-                ),
-                name="credit_pack_remaining_lte_granted",
-            ),
-        ]
 
     def __str__(self):
-        return f"{self.member} - " f"{self.remaining_credits}/{self.granted_credits}"
+        return f"{self.member} - {self.remaining_credits}/{self.granted_credits}"
+
+    def add_transaction(self, type, description, amount, booking=None, created_at=None):
+        return Transaction.objects.create(
+            pack=self,
+            type=type,
+            description=description,
+            amount=amount,
+            booking=booking,
+            **({"created_at": created_at} if created_at else {}),
+        )
 
 
 class Transaction(models.Model):
@@ -57,24 +57,20 @@ class Transaction(models.Model):
         choices=TransactionDescription.choices,
     )
     amount = models.PositiveIntegerField()
-    reference = models.CharField(
-        max_length=100,
+    booking = models.ForeignKey(
+        Booking,
+        on_delete=models.PROTECT,
+        null=True,
         blank=True,
-        db_index=True,
+        related_name="credit_transactions",
     )
     created_at = models.DateTimeField(
-        auto_now_add=True,
+        default=timezone.now,
         db_index=True,
     )
 
     class Meta:
         ordering = ["created_at", "id"]
-        constraints = [
-            models.CheckConstraint(
-                condition=models.Q(amount__gt=0),
-                name="credit_transaction_amount_positive",
-            ),
-        ]
         indexes = [
             models.Index(
                 fields=["pack", "created_at", "id"],

@@ -43,7 +43,7 @@ class FitnessClassViewSet(ModelViewSet):
         return queryset
 
 
-def _parse_date(value: str):
+def _parse_date(value):
     try:
         return datetime.strptime(value, "%Y-%m-%d").date()
     except ValueError as exc:
