@@ -13,20 +13,32 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 
+import environ
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env = environ.Env(
+    DEBUG=(bool, True),
+    SECRET_KEY=(
+        str,
+        "django-insecure-4x$im3-1p#(uxhwapk33sp+-$0+p4z)9@^6cnox!vju5hofm#n",
+    ),
+)
+
+# Take environment variables from .env file
+environ.Env.read_env(BASE_DIR / ".env")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-4x$im3-1p#(uxhwapk33sp+-$0+p4z)9@^6cnox!vju5hofm#n"
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG", default=True)
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 
 
 # Application definition
@@ -38,13 +50,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     # Third-party
     "rest_framework",
     "rest_framework.authtoken",
     "django_filters",
     "phonenumber_field",
-
     # Local apps
     "accounts",
     "bookings",
@@ -99,12 +109,31 @@ SIMPLE_JWT = {
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+DB_NAME = env("DB_NAME", default="")
+DB_ENGINE = env("DB_ENGINE", default="django.db.backends.postgresql")
+
+if not DB_NAME or "sqlite" in DB_ENGINE.lower():
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / (DB_NAME if DB_NAME else "db.sqlite3"),
+        }
     }
-}
+else:
+    is_docker = env.bool("DOCKER", default=False)
+    default_db_host = "host.docker.internal" if is_docker else "localhost"
+    db_host = env("DB_HOST", default=default_db_host) or default_db_host
+
+    DATABASES = {
+        "default": {
+            "ENGINE": DB_ENGINE,
+            "NAME": DB_NAME,
+            "USER": env("DB_USER", default=""),
+            "PASSWORD": env("DB_PASSWORD", default=""),
+            "HOST": db_host,
+            "PORT": env("DB_PORT", default="5432"),
+        }
+    }
 
 
 # Password validation
