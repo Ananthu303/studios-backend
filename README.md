@@ -1,6 +1,8 @@
 # Studio — Backend for Boutique Fitness Studios
 
-A high-concurrency, double-entry ledger based booking core for boutique fitness studios built with **Django 5.x**, **Django REST Framework (DRF)**, and **PostgreSQL / SQLite**.
+A backend for boutique fitness studios built with **Django 5.x**, **Django REST Framework (DRF)**, and **PostgreSQL / SQLite**.
+
+The system supports credit pack purchases, member credit management, class bookings, class capacity management, cancellation rules, and waitlists. It is designed with a focus on high concurrency, reliable booking operations, and a double-entry ledger for accurate credit tracking..
 
 ---
 
