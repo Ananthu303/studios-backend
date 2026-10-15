@@ -33,7 +33,10 @@ class FitnessClassViewSet(ModelViewSet):
         queryset = super().get_queryset()
         studio_id = self.request.query_params.get("studio")
         if studio_id:
-            queryset = queryset.filter(studio_id=studio_id)
+            try:
+                queryset = queryset.filter(studio_id=int(studio_id))
+            except (ValueError, TypeError):
+                queryset = queryset.none()
         start_date = self.request.query_params.get("start_date")
         end_date = self.request.query_params.get("end_date")
         if start_date:

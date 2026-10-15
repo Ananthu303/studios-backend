@@ -6,19 +6,16 @@ from accounts.permissions import IsMember
 
 from .models import Booking
 from .serializers import BookingSerializer
-from .services import (
-    cancel_booking,
-    create_booking,
-)
+from .services import create_booking
 
 
 class BookingViewSet(viewsets.ModelViewSet):
     serializer_class = BookingSerializer
     permission_classes = [IsAuthenticated]
-    http_method_names = ["get", "post", "delete", "head", "options"]
+    http_method_names = ["get", "post", "patch", "head", "options"]
 
     def get_permissions(self):
-        if self.action in ("create", "destroy"):
+        if self.action in ("create", "partial_update", "update"):
             return [IsMember()]
         return [IsAuthenticated()]
 
@@ -36,9 +33,15 @@ class BookingViewSet(viewsets.ModelViewSet):
             fitness_class_id = self.request.query_params.get("fitness_class")
             status_param = self.request.query_params.get("status")
             if member_id:
-                queryset = queryset.filter(member_id=member_id)
+                try:
+                    queryset = queryset.filter(member_id=int(member_id))
+                except (ValueError, TypeError):
+                    queryset = queryset.none()
             if fitness_class_id:
-                queryset = queryset.filter(fitness_class_id=fitness_class_id)
+                try:
+                    queryset = queryset.filter(fitness_class_id=int(fitness_class_id))
+                except (ValueError, TypeError):
+                    queryset = queryset.none()
             if status_param:
                 queryset = queryset.filter(status=status_param)
             return queryset
@@ -61,6 +64,5 @@ class BookingViewSet(viewsets.ModelViewSet):
         headers = self.get_success_headers(output.data)
         return Response(output.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    def destroy(self, request, *args, **kwargs):
-        booking = cancel_booking(request.user, kwargs["pk"])
-        return Response(self.get_serializer(booking).data)
+
+

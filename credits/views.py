@@ -34,7 +34,10 @@ def _target_member(request):
         return request.user
     if not request.user.is_studio_staff:
         raise PermissionDenied("Members may only read their own credits.")
-    return get_object_or_404(User, pk=member_id)
+    try:
+        return get_object_or_404(User, pk=int(member_id))
+    except (ValueError, TypeError):
+        raise ValidationError({"member": "Field 'member' expected a number."})  # noqa: B904
 
 
 class CreditPackViewSet(viewsets.ModelViewSet):
@@ -54,7 +57,10 @@ class CreditPackViewSet(viewsets.ModelViewSet):
         if self.request.user.is_studio_staff:
             member_id = self.request.query_params.get("member")
             if member_id:
-                queryset = queryset.filter(member_id=member_id)
+                try:
+                    queryset = queryset.filter(member_id=int(member_id))
+                except (ValueError, TypeError):
+                    queryset = queryset.none()
             return queryset
         return queryset.filter(member=self.request.user)
 

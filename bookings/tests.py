@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from unittest.mock import patch
 from zoneinfo import ZoneInfo
 
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
@@ -9,6 +10,7 @@ from rest_framework.test import APITestCase
 
 from accounts.models import User
 from bookings.models import Booking
+from bookings.serializers import BookingSerializer
 from bookings.services import cancel_booking, create_booking
 from credits.services import grant_credit_pack
 from studios.models import FitnessClass, Studio
@@ -218,7 +220,7 @@ class BookingsTests(APITestCase):
         cancel_booking(member=self.member1, booking_id=booking.id)
 
         # Second cancellation must fail
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValidationError):
             cancel_booking(member=self.member1, booking_id=booking.id)
 
     def test_waitlist_skip_unaffordable_member_preserves_position(self):
@@ -274,7 +276,7 @@ class BookingsTests(APITestCase):
 
         self.client.force_authenticate(user=self.member2)
         leave_url = reverse("booking-detail", kwargs={"pk": wl_booking.id})
-        response = self.client.delete(leave_url)
+        response = self.client.patch(leave_url, {"status": "CANCELLED"}, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         wl_booking.refresh_from_db()
@@ -334,3 +336,90 @@ class BookingsTests(APITestCase):
         # Credits forfeited (remains 8)
         self.pack1.refresh_from_db()
         self.assertEqual(self.pack1.remaining_credits, 8)
+
+    def test_invalid_booking_id_returns_404_not_found(self):
+        self.client.force_authenticate(user=self.member1)
+
+        # Non-numeric IDs like 'null', 'undefined', 'abc' should return 404, not 500
+        for invalid_id in ("null", "undefined", "abc", "999999999999999999999999"):
+            resp_patch = self.client.patch(
+                f"/api/v1/bookings/{invalid_id}/",
+                {"status": "CANCELLED"},
+                format="json",
+            )
+            self.assertEqual(
+                resp_patch.status_code,
+                status.HTTP_404_NOT_FOUND,
+                f"PATCH /bookings/{invalid_id}/ should return 404",
+            )
+
+            resp_get = self.client.get(f"/api/v1/bookings/{invalid_id}/")
+            self.assertEqual(
+                resp_get.status_code,
+                status.HTTP_404_NOT_FOUND,
+                f"GET /bookings/{invalid_id}/ should return 404",
+            )
+
+    def test_cancel_booking_via_patch_api(self):
+        booking = create_booking(
+            member=self.member1,
+            fitness_class_id=self.fitness_class.id,
+            idempotency_key="patch-cancel-test-key",
+        )
+        self.client.force_authenticate(user=self.member1)
+        url = reverse("booking-detail", kwargs={"pk": booking.id})
+        response = self.client.patch(url, {"status": "CANCELLED"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["status"], "CANCELLED")
+
+        booking.refresh_from_db()
+        self.assertEqual(booking.status, Booking.Status.CANCELLED)
+
+    def test_booking_serializer_update_cancels_booking(self):
+        booking = create_booking(
+            member=self.member1,
+            fitness_class_id=self.fitness_class.id,
+            idempotency_key="serializer-cancel-test-key",
+        )
+        self.assertEqual(booking.status, Booking.Status.CONFIRMED)
+
+        serializer = BookingSerializer(
+            instance=booking,
+            data={"status": Booking.Status.CANCELLED},
+            partial=True,
+        )
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        updated = serializer.save()
+
+        self.assertEqual(updated.status, Booking.Status.CANCELLED)
+        booking.refresh_from_db()
+        self.assertEqual(booking.status, Booking.Status.CANCELLED)
+
+    def test_cannot_cancel_booking_after_class_started(self):
+        booking = create_booking(
+            member=self.member1,
+            fitness_class_id=self.fitness_class.id,
+            idempotency_key="started-cancel-test-key",
+        )
+        self.assertEqual(booking.status, Booking.Status.CONFIRMED)
+
+        # Move time to 1 minute after class has started
+        after_start = self.fitness_class.start_time + timedelta(minutes=1)
+        with patch("django.utils.timezone.now", return_value=after_start):
+            with self.assertRaises(ValidationError) as exc:
+                cancel_booking(member=self.member1, booking_id=booking.id)
+            self.assertIn("already started", str(exc.exception))
+
+            # Also verify via API PATCH
+            self.client.force_authenticate(user=self.member1)
+            url = reverse("booking-detail", kwargs={"pk": booking.id})
+            response = self.client.patch(url, {"status": "CANCELLED"}, format="json")
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            self.assertIn("already started", str(response.data))
+
+        booking.refresh_from_db()
+        self.assertEqual(booking.status, Booking.Status.CONFIRMED)
+
+
+
+

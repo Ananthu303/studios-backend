@@ -64,6 +64,15 @@ class Booking(models.Model):
             ),
         ]
 
+    @property
+    def is_within_cancellation_cutoff(self):
+        return self.fitness_class.is_within_cancellation_cutoff
+
+    @property
+    def has_started(self):
+        return self.fitness_class.has_started
+
+
     def __str__(self):
         return f"{self.member} - {self.fitness_class} ({self.status})"
 

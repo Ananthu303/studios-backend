@@ -1029,7 +1029,17 @@
                 }
               ]
             },
-            "method": "DELETE",
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CANCELLED\"\n}"
+            },
             "url": {
               "raw": "{{baseUrl}}/bookings/{{flow_booking1_id}}/",
               "host": [
@@ -2394,7 +2404,17 @@
                 }
               ]
             },
-            "method": "DELETE",
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CANCELLED\"\n}"
+            },
             "url": {
               "raw": "{{baseUrl}}/bookings/{{booking1_id}}/",
               "host": [
@@ -2474,7 +2494,17 @@
                 }
               ]
             },
-            "method": "DELETE",
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CANCELLED\"\n}"
+            },
             "url": {
               "raw": "{{baseUrl}}/bookings/{{waitlist_booking_id}}/",
               "host": [

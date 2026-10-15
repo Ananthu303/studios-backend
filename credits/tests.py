@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
@@ -164,17 +165,16 @@ class CreditsTests(APITestCase):
             status=Booking.Status.CONFIRMED,
         )
 
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValidationError):
             deduct_credits(member=self.member1, booking=booking, credits=5)
 
     def test_reconstruct_balance_at_past_moment(self):
         now = timezone.now()
         t0 = now - timedelta(days=10)
         t1 = now - timedelta(days=5)
-        t2 = now - timedelta(days=2)
 
         # Grant 10 credits at t0
-        pack = grant_credit_pack(
+        grant_credit_pack(
             member=self.member1,
             credits=10,
             expires_at=now + timedelta(days=20),

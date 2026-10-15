@@ -1,6 +1,3 @@
-from datetime import timedelta
-from zoneinfo import ZoneInfo
-
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.db.models import Sum
@@ -20,13 +17,8 @@ def _lock_class(fitness_class_id):
             .select_related("studio")
             .get(pk=fitness_class_id)
         )
-    except FitnessClass.DoesNotExist as exc:
+    except (FitnessClass.DoesNotExist, ValueError, OverflowError) as exc:
         raise ValidationError("Class not found.") from exc
-
-
-def _require_future_class(fitness_class):
-    if fitness_class.start_time <= timezone.now():
-        raise ValidationError("Bookings are not available for started classes.")
 
 
 def _active_booking(member, fitness_class):
@@ -108,7 +100,7 @@ def create_booking(member, fitness_class_id, idempotency_key):
             )
         return existing_booking
 
-    if fitness_class.start_time <= timezone.now():
+    if fitness_class.has_started:
         raise ValidationError("Bookings are not available for started classes.")
 
     if _active_booking(member, fitness_class):
@@ -149,7 +141,7 @@ def cancel_booking(member, booking_id):
             .select_related("fitness_class__studio")
             .get(pk=booking_id, member=member)
         )
-    except Booking.DoesNotExist as exc:
+    except (Booking.DoesNotExist, ValueError, OverflowError) as exc:
         raise ValidationError("Booking not found.") from exc
 
     if booking.status == Booking.Status.CANCELLED:
@@ -164,7 +156,10 @@ def cancel_booking(member, booking_id):
     now = timezone.now()
     was_confirmed = booking.status == Booking.Status.CONFIRMED
     fitness_class = _lock_class(booking.fitness_class_id)
-    studio = fitness_class.studio
+
+    if fitness_class.has_started:
+        raise ValidationError("Cannot cancel a booking for a class that has already started.")
+
     booking.status = Booking.Status.CANCELLED
     booking.cancelled_at = now
     booking.save(update_fields=["status", "cancelled_at"])
@@ -174,14 +169,10 @@ def cancel_booking(member, booking_id):
 
     _release_spot(fitness_class, booking)
 
-    studio_tz = ZoneInfo(str(studio.timezone))
-    class_start_local = fitness_class.start_time.astimezone(studio_tz)
-    cutoff_local = class_start_local - timedelta(hours=studio.cancellation_cutoff_hours)
-    now_local = now.astimezone(studio_tz)
-    if now_local <= cutoff_local:
+    if fitness_class.is_within_cancellation_cutoff:
         _refund_booking_credits(booking)
 
-    if fitness_class.start_time > now:
+    if not fitness_class.has_started:
         _promote_waitlisted_member(fitness_class)
     return booking
 
@@ -217,7 +208,7 @@ def _refund_booking_credits(booking):
 
 
 def _promote_waitlisted_member(fitness_class):
-    if fitness_class.start_time <= timezone.now():
+    if fitness_class.has_started:
         return
 
     waiting_bookings = (
