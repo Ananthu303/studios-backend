@@ -101,9 +101,14 @@ REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "config.exception_handler.exception_handler",
 }
 
+
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        days=env.int("JWT_ACCESS_EXPIRY_DAYS", default=1)
+    ),
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        days=env.int("JWT_REFRESH_EXPIRY_DAYS", default=7)
+    ),
 }
 
 # Database
