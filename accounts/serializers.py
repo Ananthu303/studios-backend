@@ -30,14 +30,14 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"password_2": "Passwords do not match."})
 
         role = attrs.get("role", User.Role.MEMBER)
-        if role != User.Role.MEMBER:
+        if role == User.Role.STAFF:
             request = self.context.get("request")
             if not request or not IsSuperAdmin().has_permission(request, None):
                 raise serializers.ValidationError(
                     {
                         "role": (
                             "Only an authenticated admin can create "
-                            "staff or admin users."
+                            "staff accounts."
                         )
                     }
                 )
@@ -48,10 +48,14 @@ class RegisterSerializer(serializers.ModelSerializer):
         password = validated_data.pop("password_1")
         role = validated_data.pop("role", User.Role.MEMBER)
         validated_data.pop("password_2")
+        is_staff = role in (User.Role.STAFF, User.Role.SUPER_ADMIN)
+        is_superuser = role == User.Role.SUPER_ADMIN
         return User.objects.create_user(
             phone_number=validated_data["phone_number"],
             password=password,
             role=role,
+            is_staff=is_staff,
+            is_superuser=is_superuser,
         )
 
 

@@ -35,6 +35,22 @@ class AccountsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(User.objects.filter(phone_number="+919876500003").exists())
 
+    def test_superadmin_registration(self):
+        url = reverse("users-register")
+        data = {
+            "phone_number": "+919876500098",
+            "password_1": "securepass123",
+            "password_2": "securepass123",
+            "role": "SUPER_ADMIN",
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["role"], "SUPER_ADMIN")
+        user = User.objects.get(phone_number="+919876500098")
+        self.assertTrue(user.is_superuser)
+        self.assertTrue(user.is_staff)
+
+
     def test_non_admin_cannot_register_staff(self):
         url = reverse("users-register")
         data = {

@@ -161,13 +161,31 @@ Studio manages the full lifecycle of boutique fitness scheduling:
 
 Follow this flow using cURL or the included Postman collection:
 
-1. **Register & Login Staff User**:
+1. **Register & Login Super Admin, then Create Staff Account**:
    ```bash
+   # Register Super Admin
+   curl -X POST http://127.0.0.1:8000/api/v1/users/register/ \
+     -H "Content-Type: application/json" \
+     -d '{"phone_number": "+919876500000", "password_1": "AdminPass123!", "password_2": "AdminPass123!", "role": "SUPER_ADMIN"}'
+
+   # Login Super Admin
    curl -X POST http://127.0.0.1:8000/api/v1/users/login/ \
      -H "Content-Type: application/json" \
      -d '{"phone_number": "+919876500000", "password": "AdminPass123!"}'
+   # Save the returned access token as ADMIN_TOKEN
+
+   # Super Admin Creates Staff Account
+   curl -X POST http://127.0.0.1:8000/api/v1/users/register/ \
+     -H "Authorization: Bearer $ADMIN_TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"phone_number": "+919876500099", "password_1": "StaffPass123!", "password_2": "StaffPass123!", "role": "STAFF"}'
+
+   # Login Staff User
+   curl -X POST http://127.0.0.1:8000/api/v1/users/login/ \
+     -H "Content-Type: application/json" \
+     -d '{"phone_number": "+919876500099", "password": "StaffPass123!"}'
+   # Save the returned access token as STAFF_TOKEN
    ```
-   Save the returned `access` token as `STAFF_TOKEN`.
 
 2. **Register & Login Member User**:
    ```bash
@@ -277,9 +295,7 @@ Follow this flow using cURL or the included Postman collection:
 
 ## 8. Deliverables & Artifacts
 
-- **Postman Collection**: [`studio_postman_collection.json`](./studio_postman_collection.json) (Pre-configured end-to-end collection with environment variables and automated assertions).
-- **Visual Postman Flow Blueprint**: [`studio_booking_flow.json`](./studio_booking_flow.json) and guide [`POSTMAN_FLOWS_GUIDE.md`](./POSTMAN_FLOWS_GUIDE.md) (Interactive visual node/canvas workflow definition).
-- **OpenAPI 3.0 Specification**: [`openapi.yaml`](./openapi.yaml) (Full API schema specification).
+- **Postman Collection**: [`studio_postman_collection.json`](./studio_postman_collection.json) (Pre-configured end-to-end collection with automated assertions covering the complete lifecycle: registration, auth, studio/class creation, credit packs, idempotent bookings, cancellations with cutoff refunds, and waitlist auto-promotion).
 - **Docker Stack**: [`Dockerfile`](./Dockerfile) and [`docker-compose.yml`](./docker-compose.yml).
 - **CI / CD Pipeline**: [`.github/workflows/ci.yml`](./.github/workflows/ci.yml).
 - **Configuration**: [`pyproject.toml`](./pyproject.toml) and [`requirements.txt`](./requirements.txt).

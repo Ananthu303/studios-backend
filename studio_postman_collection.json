@@ -1,57 +1,217 @@
 {
   "info": {
-    "name": "Studio Fitness Booking API - End to End Collection & Flows",
+    "name": "Studio Fitness Booking API - End to End Collection",
     "_postman_id": "7b8f9a2e-4b71-46df-9d51-c081e2cb0965",
-    "description": "Comprehensive Postman Collection with automated End-to-End Postman Flows and test assertions for Studio Fitness Booking API.\nIncludes automated variable propagation, dynamic pre-request scripts, and assertions for the full boutique fitness lifecycle (Auth, Studio & Class Setup, Credit Grants, FIFO Deduction, Idempotency, Class Filling, Waitlist Promotion, and Cutoff Refunds).",
+    "description": "Comprehensive Postman Collection with automated test assertions for Studio Fitness Booking API.\nIncludes automated variable propagation, dynamic pre-request scripts, and assertions for the full boutique fitness lifecycle (Auth, Studio & Class Setup, Credit Grants, FIFO Deduction, Idempotency, Class Filling, Waitlist Promotion, and Cutoff Refunds).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "baseUrl", "value": "http://127.0.0.1:8000/api/v1", "type": "string" },
-    { "key": "staff_access", "value": "", "type": "string" },
-    { "key": "member1_access", "value": "", "type": "string" },
-    { "key": "member1_refresh", "value": "", "type": "string" },
-    { "key": "member2_access", "value": "", "type": "string" },
-    { "key": "member1_id", "value": "", "type": "string" },
-    { "key": "member2_id", "value": "", "type": "string" },
-    { "key": "studio_id", "value": "", "type": "string" },
-    { "key": "class_id", "value": "", "type": "string" },
-    { "key": "pack1_id", "value": "", "type": "string" },
-    { "key": "tx_id", "value": "", "type": "string" },
-    { "key": "booking1_id", "value": "", "type": "string" },
-    { "key": "waitlist_booking_id", "value": "", "type": "string" },
-    { "key": "flow_staff_token", "value": "", "type": "string" },
-    { "key": "flow_m1_phone", "value": "", "type": "string" },
-    { "key": "flow_m1_id", "value": "", "type": "string" },
-    { "key": "flow_m1_token", "value": "", "type": "string" },
-    { "key": "flow_m2_phone", "value": "", "type": "string" },
-    { "key": "flow_m2_id", "value": "", "type": "string" },
-    { "key": "flow_m2_token", "value": "", "type": "string" },
-    { "key": "flow_studio_id", "value": "", "type": "string" },
-    { "key": "flow_class_id", "value": "", "type": "string" },
-    { "key": "flow_class_start", "value": "", "type": "string" },
-    { "key": "flow_pack_expiry", "value": "", "type": "string" },
-    { "key": "flow_pack1_id", "value": "", "type": "string" },
-    { "key": "flow_pack2_id", "value": "", "type": "string" },
-    { "key": "flow_idem_key_1", "value": "", "type": "string" },
-    { "key": "flow_idem_key_2", "value": "", "type": "string" },
-    { "key": "flow_booking1_id", "value": "", "type": "string" },
-    { "key": "flow_booking2_id", "value": "", "type": "string" }
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "staff_access",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "member1_access",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "member1_refresh",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "member2_access",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "member1_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "member2_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "studio_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "class_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "pack1_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "tx_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "booking1_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "waitlist_booking_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "flow_staff_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "flow_m1_phone",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "flow_m1_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "flow_m1_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "flow_m2_phone",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "flow_m2_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "flow_m2_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "flow_studio_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "flow_class_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "flow_class_start",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "flow_pack_expiry",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "flow_pack1_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "flow_pack2_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "flow_idem_key_1",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "flow_idem_key_2",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "flow_booking1_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "flow_booking2_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "admin_access",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "superadmin_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "staff_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "flow_admin_phone",
+      "value": "+919876500000",
+      "type": "string"
+    },
+    {
+      "key": "flow_admin_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "flow_staff_phone",
+      "value": "+919876500099",
+      "type": "string"
+    },
+    {
+      "key": "flow_staff_id",
+      "value": "",
+      "type": "string"
+    }
   ],
   "item": [
     {
       "name": "0. End-to-End Core Booking Flow (1-Click Automated Runner)",
-      "description": "Automated sequential flow fulfilling §1 and §7 of the Machine Task. Runs end-to-end: authenticate, grant credits, book, fill the class, waitlist, cancel with cutoff refund, and auto-promote waitlisted member.",
+      "description": "Automated sequential flow fulfilling \u00a71 and \u00a77 of the Machine Task. Runs end-to-end: authenticate, grant credits, book, fill the class, waitlist, cancel with cutoff refund, and auto-promote waitlisted member.",
       "item": [
         {
-          "name": "Step 00: Bootstrap Staff User (Create if Not Exists)",
+          "name": "Step 00a: Register Super Admin (Create if Not Exists)",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('Staff user ready (201 Created or 400 Already Exists)', function () {",
+                  "pm.test('Super Admin ready (201 Created or 400 Already Exists)', function () {",
                   "  pm.expect([201, 400]).to.include(pm.response.code);",
-                  "});"
+                  "});",
+                  "if (pm.response.code === 201) {",
+                  "  var data = pm.response.json();",
+                  "  pm.test('Role is SUPER_ADMIN', function () { pm.expect(data.role).to.eql('SUPER_ADMIN'); });",
+                  "  pm.collectionVariables.set('superadmin_id', data.id);",
+                  "}"
                 ],
                 "type": "text/javascript"
               }
@@ -59,12 +219,125 @@
           ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\\n  \\\"phone_number\\\": \\\"+919876500000\\\",\\n  \\\"password_1\\\": \\\"AdminPass123!\\\",\\n  \\\"password_2\\\": \\\"AdminPass123!\\\",\\n  \\\"role\\\": \\\"STAFF\\\"\\n}"
+              "raw": "{\n  \"phone_number\": \"{{flow_admin_phone}}\",\n  \"password_1\": \"AdminPass123!\",\n  \"password_2\": \"AdminPass123!\",\n  \"role\": \"SUPER_ADMIN\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/users/register/", "host": ["{{baseUrl}}"], "path": ["users", "register", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/users/register/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "register",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Step 00b: Login Super Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 OK', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.test('Has admin access token', function () { pm.expect(data.access).to.be.a('string'); });",
+                  "pm.collectionVariables.set('flow_admin_token', data.access);",
+                  "pm.collectionVariables.set('admin_access', data.access);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone_number\": \"{{flow_admin_phone}}\",\n  \"password\": \"AdminPass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/login/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "login",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Step 00c: Super Admin Creates Staff Account (Create if Not Exists)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Staff account ready (201 Created or 400 Already Exists)', function () {",
+                  "  pm.expect([201, 400]).to.include(pm.response.code);",
+                  "});",
+                  "if (pm.response.code === 201) {",
+                  "  var data = pm.response.json();",
+                  "  pm.test('Role is STAFF', function () { pm.expect(data.role).to.eql('STAFF'); });",
+                  "  pm.collectionVariables.set('staff_id', data.id);",
+                  "  pm.collectionVariables.set('flow_staff_id', data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{flow_admin_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone_number\": \"{{flow_staff_phone}}\",\n  \"password_1\": \"StaffPass123!\",\n  \"password_2\": \"StaffPass123!\",\n  \"role\": \"STAFF\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/register/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "register",
+                ""
+              ]
+            }
           }
         },
         {
@@ -77,7 +350,8 @@
                   "pm.test('Status is 200 OK', function () { pm.response.to.have.status(200); });",
                   "var data = pm.response.json();",
                   "pm.test('Has access token', function () { pm.expect(data.access).to.be.a('string'); });",
-                  "pm.collectionVariables.set('flow_staff_token', data.access);"
+                  "pm.collectionVariables.set('flow_staff_token', data.access);",
+                  "pm.collectionVariables.set('staff_access', data.access);"
                 ],
                 "type": "text/javascript"
               }
@@ -85,12 +359,27 @@
           ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"phone_number\": \"+919876500000\",\n  \"password\": \"AdminPass123!\"\n}"
+              "raw": "{\n  \"phone_number\": \"{{flow_staff_phone}}\",\n  \"password\": \"StaffPass123!\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/users/login/", "host": ["{{baseUrl}}"], "path": ["users", "login", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/users/login/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "login",
+                ""
+              ]
+            }
           }
         },
         {
@@ -121,12 +410,27 @@
           ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"phone_number\": \"{{flow_m1_phone}}\",\n  \"password_1\": \"MemberPass123!\",\n  \"password_2\": \"MemberPass123!\",\n  \"role\": \"MEMBER\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/users/register/", "host": ["{{baseUrl}}"], "path": ["users", "register", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/users/register/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "register",
+                ""
+              ]
+            }
           }
         },
         {
@@ -146,12 +450,27 @@
           ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"phone_number\": \"{{flow_m1_phone}}\",\n  \"password\": \"MemberPass123!\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/users/login/", "host": ["{{baseUrl}}"], "path": ["users", "login", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/users/login/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "login",
+                ""
+              ]
+            }
           }
         },
         {
@@ -181,12 +500,27 @@
           ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"phone_number\": \"{{flow_m2_phone}}\",\n  \"password_1\": \"MemberPass123!\",\n  \"password_2\": \"MemberPass123!\",\n  \"role\": \"MEMBER\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/users/register/", "host": ["{{baseUrl}}"], "path": ["users", "register", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/users/register/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "register",
+                ""
+              ]
+            }
           }
         },
         {
@@ -206,12 +540,27 @@
           ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"phone_number\": \"{{flow_m2_phone}}\",\n  \"password\": \"MemberPass123!\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/users/login/", "host": ["{{baseUrl}}"], "path": ["users", "login", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/users/login/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "login",
+                ""
+              ]
+            }
           }
         },
         {
@@ -231,14 +580,37 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_staff_token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{flow_staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Tribeca Strength Studio\",\n  \"timezone\": \"America/New_York\",\n  \"cancellation_cutoff_hours\": 4\n}"
             },
-            "url": { "raw": "{{baseUrl}}/studios/", "host": ["{{baseUrl}}"], "path": ["studios", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/studios/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "studios",
+                ""
+              ]
+            }
           }
         },
         {
@@ -268,14 +640,37 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_staff_token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{flow_staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"studio\": {{flow_studio_id}},\n  \"name\": \"Full Body Burn\",\n  \"start_time\": \"{{flow_class_start}}\",\n  \"duration_minutes\": 50,\n  \"spots\": 1,\n  \"credit_cost\": 2\n}"
             },
-            "url": { "raw": "{{baseUrl}}/classes/", "host": ["{{baseUrl}}"], "path": ["classes", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/classes/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "classes",
+                ""
+              ]
+            }
           }
         },
         {
@@ -305,14 +700,37 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_staff_token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{flow_staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"member\": {{flow_m1_id}},\n  \"granted_credits\": 10,\n  \"expires_at\": \"{{flow_pack_expiry}}\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/credit-packs/", "host": ["{{baseUrl}}"], "path": ["credit-packs", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/credit-packs/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "credit-packs",
+                ""
+              ]
+            }
           }
         },
         {
@@ -331,14 +749,37 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_staff_token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{flow_staff_token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"member\": {{flow_m2_id}},\n  \"granted_credits\": 10,\n  \"expires_at\": \"{{flow_pack_expiry}}\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/credit-packs/", "host": ["{{baseUrl}}"], "path": ["credit-packs", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/credit-packs/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "credit-packs",
+                ""
+              ]
+            }
           }
         },
         {
@@ -368,17 +809,41 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_m1_token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{flow_m1_token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Idempotency-Key", "value": "{{flow_idem_key_1}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "{{flow_idem_key_1}}"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"fitness_class\": {{flow_class_id}}\n}"
             },
-            "url": { "raw": "{{baseUrl}}/bookings/", "host": ["{{baseUrl}}"], "path": ["bookings", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/bookings/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookings",
+                ""
+              ]
+            }
           }
         },
         {
@@ -397,17 +862,41 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_m1_token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{flow_m1_token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Idempotency-Key", "value": "{{flow_idem_key_1}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "{{flow_idem_key_1}}"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"fitness_class\": {{flow_class_id}}\n}"
             },
-            "url": { "raw": "{{baseUrl}}/bookings/", "host": ["{{baseUrl}}"], "path": ["bookings", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/bookings/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookings",
+                ""
+              ]
+            }
           }
         },
         {
@@ -437,17 +926,41 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_m2_token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{flow_m2_token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Idempotency-Key", "value": "{{flow_idem_key_2}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "{{flow_idem_key_2}}"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"fitness_class\": {{flow_class_id}}\n}"
             },
-            "url": { "raw": "{{baseUrl}}/bookings/", "host": ["{{baseUrl}}"], "path": ["bookings", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/bookings/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookings",
+                ""
+              ]
+            }
           }
         },
         {
@@ -466,9 +979,28 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_m2_token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{flow_m2_token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/credit-packs/balance/", "host": ["{{baseUrl}}"], "path": ["credit-packs", "balance", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/credit-packs/balance/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "credit-packs",
+                "balance",
+                ""
+              ]
+            }
           }
         },
         {
@@ -487,9 +1019,28 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_m1_token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{flow_m1_token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "DELETE",
-            "url": { "raw": "{{baseUrl}}/bookings/{{flow_booking1_id}}/", "host": ["{{baseUrl}}"], "path": ["bookings", "{{flow_booking1_id}}", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{flow_booking1_id}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookings",
+                "{{flow_booking1_id}}",
+                ""
+              ]
+            }
           }
         },
         {
@@ -508,9 +1059,28 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_m1_token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{flow_m1_token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/credit-packs/balance/", "host": ["{{baseUrl}}"], "path": ["credit-packs", "balance", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/credit-packs/balance/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "credit-packs",
+                "balance",
+                ""
+              ]
+            }
           }
         },
         {
@@ -530,9 +1100,28 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_m2_token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{flow_m2_token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/bookings/{{flow_booking2_id}}/", "host": ["{{baseUrl}}"], "path": ["bookings", "{{flow_booking2_id}}", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{flow_booking2_id}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookings",
+                "{{flow_booking2_id}}",
+                ""
+              ]
+            }
           }
         },
         {
@@ -551,9 +1140,28 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_m2_token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{flow_m2_token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/credit-packs/balance/", "host": ["{{baseUrl}}"], "path": ["credit-packs", "balance", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/credit-packs/balance/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "credit-packs",
+                "balance",
+                ""
+              ]
+            }
           }
         },
         {
@@ -578,9 +1186,27 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{flow_m1_token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{flow_m1_token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/credit-transactions/", "host": ["{{baseUrl}}"], "path": ["credit-transactions", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/credit-transactions/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "credit-transactions",
+                ""
+              ]
+            }
           }
         }
       ]
@@ -589,7 +1215,185 @@
       "name": "1. Access & Auth (/users/)",
       "item": [
         {
-          "name": "1.1 Register Member 1",
+          "name": "1.1 Register Super Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 201 Created or 400 Already Exists', function () {",
+                  "  pm.expect([201, 400]).to.include(pm.response.code);",
+                  "});",
+                  "if (pm.response.code === 201) {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.collectionVariables.set('superadmin_id', jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone_number\": \"+919876500000\",\n  \"password_1\": \"AdminPass123!\",\n  \"password_2\": \"AdminPass123!\",\n  \"role\": \"SUPER_ADMIN\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/register/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "register",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.2 Login Super Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 OK', function () { pm.response.to.have.status(200); });",
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('admin_access', jsonData.access);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone_number\": \"+919876500000\",\n  \"password\": \"AdminPass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/login/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "login",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.3 Super Admin Creates Staff Account",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 201 Created or 400 Already Exists', function () {",
+                  "  pm.expect([201, 400]).to.include(pm.response.code);",
+                  "});",
+                  "if (pm.response.code === 201) {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.collectionVariables.set('staff_id', jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{admin_access}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone_number\": \"+919876500099\",\n  \"password_1\": \"StaffPass123!\",\n  \"password_2\": \"StaffPass123!\",\n  \"role\": \"STAFF\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/register/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "register",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.4 Login Staff User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 OK', function () { pm.response.to.have.status(200); });",
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('staff_access', jsonData.access);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone_number\": \"+919876500099\",\n  \"password\": \"StaffPass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/login/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "login",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.5 Register Member 1",
           "event": [
             {
               "listen": "test",
@@ -604,16 +1408,31 @@
           ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"phone_number\": \"+919876500001\",\n  \"password_1\": \"MemberPass123!\",\n  \"password_2\": \"MemberPass123!\",\n  \"role\": \"MEMBER\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/users/register/", "host": ["{{baseUrl}}"], "path": ["users", "register", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/users/register/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "register",
+                ""
+              ]
+            }
           }
         },
         {
-          "name": "1.2 Login Member 1",
+          "name": "1.6 Login Member 1",
           "event": [
             {
               "listen": "test",
@@ -629,16 +1448,31 @@
           ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"phone_number\": \"+919876500001\",\n  \"password\": \"MemberPass123!\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/users/login/", "host": ["{{baseUrl}}"], "path": ["users", "login", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/users/login/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "login",
+                ""
+              ]
+            }
           }
         },
         {
-          "name": "1.3 Register Member 2",
+          "name": "1.7 Register Member 2",
           "event": [
             {
               "listen": "test",
@@ -653,16 +1487,31 @@
           ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"phone_number\": \"+919876500002\",\n  \"password_1\": \"MemberPass123!\",\n  \"password_2\": \"MemberPass123!\",\n  \"role\": \"MEMBER\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/users/register/", "host": ["{{baseUrl}}"], "path": ["users", "register", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/users/register/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "register",
+                ""
+              ]
+            }
           }
         },
         {
-          "name": "1.4 Login Member 2",
+          "name": "1.8 Login Member 2",
           "event": [
             {
               "listen": "test",
@@ -677,77 +1526,141 @@
           ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"phone_number\": \"+919876500002\",\n  \"password\": \"MemberPass123!\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/users/login/", "host": ["{{baseUrl}}"], "path": ["users", "login", ""] }
-          }
-        },
-        {
-          "name": "1.5 Login Staff User",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "var jsonData = pm.response.json();",
-                  "pm.collectionVariables.set('staff_access', jsonData.access);"
-                ],
-                "type": "text/javascript"
-              }
+            "url": {
+              "raw": "{{baseUrl}}/users/login/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "login",
+                ""
+              ]
             }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"phone_number\": \"+919876500000\",\n  \"password\": \"AdminPass123!\"\n}"
-            },
-            "url": { "raw": "{{baseUrl}}/users/login/", "host": ["{{baseUrl}}"], "path": ["users", "login", ""] }
           }
         },
         {
-          "name": "1.6 Refresh JWT Token",
+          "name": "1.9 Refresh JWT Token",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"refresh\": \"{{member1_refresh}}\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/users/token/refresh/", "host": ["{{baseUrl}}"], "path": ["users", "token", "refresh", ""] }
-          }
-        },
-        {
-          "name": "1.7 Get Current User Profile (Me)",
-          "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
-            "method": "GET",
-            "url": { "raw": "{{baseUrl}}/users/me/", "host": ["{{baseUrl}}"], "path": ["users", "me", ""] }
-          }
-        },
-        {
-          "name": "1.8 List Users (Staff Only)",
-          "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staff_access}}", "type": "string" }] },
-            "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/users/?role=MEMBER",
-              "host": ["{{baseUrl}}"],
-              "path": ["users", ""],
-              "query": [{ "key": "role", "value": "MEMBER" }]
+              "raw": "{{baseUrl}}/users/token/refresh/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "token",
+                "refresh",
+                ""
+              ]
             }
           }
         },
         {
-          "name": "1.9 Retrieve User by ID (Staff Only)",
+          "name": "1.10 Get Current User Profile (Me)",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staff_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member1_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/users/{{member1_id}}/", "host": ["{{baseUrl}}"], "path": ["users", "{{member1_id}}", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/users/me/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "me",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.11 List Users (Staff / Super Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_access}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/users/?role=MEMBER",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "role",
+                  "value": "MEMBER"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.12 Retrieve User by ID (Staff / Super Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_access}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/users/{{member1_id}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{member1_id}}",
+                ""
+              ]
+            }
           }
         }
       ]
@@ -770,30 +1683,90 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staff_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Downtown Pilates Studio\",\n  \"timezone\": \"America/New_York\",\n  \"cancellation_cutoff_hours\": 4\n}"
             },
-            "url": { "raw": "{{baseUrl}}/studios/", "host": ["{{baseUrl}}"], "path": ["studios", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/studios/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "studios",
+                ""
+              ]
+            }
           }
         },
         {
           "name": "2.2 List Studios",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member1_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/studios/", "host": ["{{baseUrl}}"], "path": ["studios", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/studios/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "studios",
+                ""
+              ]
+            }
           }
         },
         {
           "name": "2.3 Retrieve Studio by ID",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member1_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/studios/{{studio_id}}/", "host": ["{{baseUrl}}"], "path": ["studios", "{{studio_id}}", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/studios/{{studio_id}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "studios",
+                "{{studio_id}}",
+                ""
+              ]
+            }
           }
         },
         {
@@ -811,28 +1784,71 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staff_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"studio\": {{studio_id}},\n  \"name\": \"Kettlebell Foundations\",\n  \"start_time\": \"2026-10-20T10:00:00Z\",\n  \"duration_minutes\": 50,\n  \"spots\": 1,\n  \"credit_cost\": 2\n}"
             },
-            "url": { "raw": "{{baseUrl}}/classes/", "host": ["{{baseUrl}}"], "path": ["classes", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/classes/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "classes",
+                ""
+              ]
+            }
           }
         },
         {
           "name": "2.5 Browse Classes with Date Filter",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member1_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/classes/?start_date=2026-10-15&end_date=2026-10-25",
-              "host": ["{{baseUrl}}"],
-              "path": ["classes", ""],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "classes",
+                ""
+              ],
               "query": [
-                { "key": "start_date", "value": "2026-10-15" },
-                { "key": "end_date", "value": "2026-10-25" }
+                {
+                  "key": "start_date",
+                  "value": "2026-10-15"
+                },
+                {
+                  "key": "end_date",
+                  "value": "2026-10-25"
+                }
               ]
             }
           }
@@ -840,9 +1856,28 @@
         {
           "name": "2.6 Retrieve Class by ID",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member1_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/classes/{{class_id}}/", "host": ["{{baseUrl}}"], "path": ["classes", "{{class_id}}", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/classes/{{class_id}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "classes",
+                "{{class_id}}",
+                ""
+              ]
+            }
           }
         }
       ]
@@ -865,63 +1900,185 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staff_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"member\": {{member1_id}},\n  \"granted_credits\": 10,\n  \"expires_at\": \"2026-11-20T00:00:00Z\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/credit-packs/", "host": ["{{baseUrl}}"], "path": ["credit-packs", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/credit-packs/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "credit-packs",
+                ""
+              ]
+            }
           }
         },
         {
           "name": "3.2 Grant Credit Pack to Member 2 (Staff)",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staff_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staff_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"member\": {{member2_id}},\n  \"granted_credits\": 5,\n  \"expires_at\": \"2026-11-20T00:00:00Z\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/credit-packs/", "host": ["{{baseUrl}}"], "path": ["credit-packs", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/credit-packs/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "credit-packs",
+                ""
+              ]
+            }
           }
         },
         {
           "name": "3.3 List Credit Packs",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member1_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/credit-packs/", "host": ["{{baseUrl}}"], "path": ["credit-packs", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/credit-packs/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "credit-packs",
+                ""
+              ]
+            }
           }
         },
         {
           "name": "3.4 Retrieve Credit Pack by ID",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member1_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/credit-packs/{{pack1_id}}/", "host": ["{{baseUrl}}"], "path": ["credit-packs", "{{pack1_id}}", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/credit-packs/{{pack1_id}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "credit-packs",
+                "{{pack1_id}}",
+                ""
+              ]
+            }
           }
         },
         {
           "name": "3.5 Get Member 1 Current Balance Breakdown",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member1_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/credit-packs/balance/", "host": ["{{baseUrl}}"], "path": ["credit-packs", "balance", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/credit-packs/balance/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "credit-packs",
+                "balance",
+                ""
+              ]
+            }
           }
         },
         {
           "name": "3.6 Reconstruct Balance as of Past Moment",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member1_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/credit-packs/balance/?as_of=2026-10-14T00:00:00Z",
-              "host": ["{{baseUrl}}"],
-              "path": ["credit-packs", "balance", ""],
-              "query": [{ "key": "as_of", "value": "2026-10-14T00:00:00Z" }]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "credit-packs",
+                "balance",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "as_of",
+                  "value": "2026-10-14T00:00:00Z"
+                }
+              ]
             }
           }
         },
@@ -940,17 +2097,54 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member1_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/credit-transactions/", "host": ["{{baseUrl}}"], "path": ["credit-transactions", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/credit-transactions/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "credit-transactions",
+                ""
+              ]
+            }
           }
         },
         {
           "name": "3.8 Retrieve Single Transaction by ID",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member1_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/credit-transactions/{{tx_id}}/", "host": ["{{baseUrl}}"], "path": ["credit-transactions", "{{tx_id}}", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/credit-transactions/{{tx_id}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "credit-transactions",
+                "{{tx_id}}",
+                ""
+              ]
+            }
           }
         }
       ]
@@ -973,33 +2167,81 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member1_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Idempotency-Key", "value": "idem-key-member1-book-001" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "idem-key-member1-book-001"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"fitness_class\": {{class_id}}\n}"
             },
-            "url": { "raw": "{{baseUrl}}/bookings/", "host": ["{{baseUrl}}"], "path": ["bookings", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/bookings/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookings",
+                ""
+              ]
+            }
           }
         },
         {
           "name": "4.2 Retry Booking with Same Idempotency-Key (Replay)",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member1_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Idempotency-Key", "value": "idem-key-member1-book-001" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "idem-key-member1-book-001"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"fitness_class\": {{class_id}}\n}"
             },
-            "url": { "raw": "{{baseUrl}}/bookings/", "host": ["{{baseUrl}}"], "path": ["bookings", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/bookings/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookings",
+                ""
+              ]
+            }
           }
         },
         {
@@ -1017,78 +2259,233 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member2_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member2_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Idempotency-Key", "value": "idem-key-member2-waitlist-001" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "idem-key-member2-waitlist-001"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"fitness_class\": {{class_id}}\n}"
             },
-            "url": { "raw": "{{baseUrl}}/bookings/", "host": ["{{baseUrl}}"], "path": ["bookings", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/bookings/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookings",
+                ""
+              ]
+            }
           }
         },
         {
           "name": "4.4 List Member Bookings",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member1_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/bookings/", "host": ["{{baseUrl}}"], "path": ["bookings", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/bookings/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookings",
+                ""
+              ]
+            }
           }
         },
         {
           "name": "4.5 Filter Waitlist Entries (?status=WAITING_LIST)",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member2_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member2_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/bookings/?status=WAITING_LIST",
-              "host": ["{{baseUrl}}"],
-              "path": ["bookings", ""],
-              "query": [{ "key": "status", "value": "WAITING_LIST" }]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookings",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "WAITING_LIST"
+                }
+              ]
             }
           }
         },
         {
           "name": "4.6 Retrieve Booking by ID (With slot_number)",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member1_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/bookings/{{booking1_id}}/", "host": ["{{baseUrl}}"], "path": ["bookings", "{{booking1_id}}", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{booking1_id}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookings",
+                "{{booking1_id}}",
+                ""
+              ]
+            }
           }
         },
         {
           "name": "4.7 Member 1 Cancels Booking (Triggers Refund & Waitlist Promo)",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member1_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "DELETE",
-            "url": { "raw": "{{baseUrl}}/bookings/{{booking1_id}}/", "host": ["{{baseUrl}}"], "path": ["bookings", "{{booking1_id}}", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{booking1_id}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookings",
+                "{{booking1_id}}",
+                ""
+              ]
+            }
           }
         },
         {
           "name": "4.8 Member 1 Checks Refunded Balance",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member1_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member1_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/credit-packs/balance/", "host": ["{{baseUrl}}"], "path": ["credit-packs", "balance", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/credit-packs/balance/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "credit-packs",
+                "balance",
+                ""
+              ]
+            }
           }
         },
         {
           "name": "4.9 Member 2 Checks Bookings (Auto-Promoted to CONFIRMED with Slot)",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member2_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member2_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/bookings/", "host": ["{{baseUrl}}"], "path": ["bookings", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/bookings/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookings",
+                ""
+              ]
+            }
           }
         },
         {
           "name": "4.10 Leave Waitlist / Cancel Booking",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{member2_access}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{member2_access}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "DELETE",
-            "url": { "raw": "{{baseUrl}}/bookings/{{waitlist_booking_id}}/", "host": ["{{baseUrl}}"], "path": ["bookings", "{{waitlist_booking_id}}", ""] }
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{waitlist_booking_id}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookings",
+                "{{waitlist_booking_id}}",
+                ""
+              ]
+            }
           }
         }
       ]

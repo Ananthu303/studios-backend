@@ -3,7 +3,7 @@ from zoneinfo import ZoneInfo
 
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
-from django.db.models import F, Sum
+from django.db.models import Sum
 from django.utils import timezone
 
 from credits.models import CreditPack, Transaction
