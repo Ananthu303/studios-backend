@@ -64,8 +64,8 @@ Studio manages the full lifecycle of boutique fitness scheduling:
 | **4** | Credits are whole numbers. | Enforced as `PositiveIntegerField` on models and serializers. |
 | **5** | FIFO credit deduction (expiring soonest spent first). Expired credits cannot be spent. | In `deduct_credits`, packs are locked and ordered by `expires_at ASC, granted_at ASC`. Filter `expires_at > now` strictly excludes expired packs. |
 | **6** | Never confirm more bookings than spots under any concurrency. | Double protection: `select_for_update()` row-level locks on `FitnessClass`, atomic F-expression increment (`confirmed_count < spots`), and DB-level `CheckConstraint(confirmed_count <= spots)`. |
-| **7** | Cancellation at/before cutoff refunds credits in full. After cutoff forfeits credits. | In `cancel_booking`, studio cutoff local time is calculated. If `now_local <= cutoff_local`, `_refund_booking_credits` restores credits to original packs; otherwise credits are forfeited. |
-| **8** | Cutoff measured in studio local timezone, not server's. | Computed via `class_start_local = class.start_time.astimezone(studio_tz)` and `now_local = now.astimezone(studio_tz)` where `studio_tz = ZoneInfo(studio.timezone)`. |
+| **7** | Cancellation at/before cutoff refunds credits in full. After cutoff forfeits credits. Classes that have started cannot be cancelled. | Cancellation is executed via `PATCH /bookings/{id}/` updating `status` to `CANCELLED` (handled in `BookingSerializer.update` which calls `cancel_booking`). If `fitness_class.has_started`, cancellation is rejected with 400. If within cutoff (`fitness_class.is_within_cancellation_cutoff`), `_refund_booking_credits` restores credits; after cutoff, credits are forfeited. |
+| **8** | Cutoff measured in studio local timezone, not server's. | Computed via `FitnessClass.is_within_cancellation_cutoff` and `has_started` properties comparing against `timezone.now()` in the studio's IANA timezone. |
 | **9** | Waitlist for full classes. Promotion of longest-waiting member who can afford it. Unaffordable keep place. | FIFO ordering `order_by("booked_at", "id")`. In `_promote_waitlisted_member`, skips members with insufficient credits without modifying their waitlist record. When an eligible member is found, they are confirmed, charged, and spot is reserved. |
 | **10** | Reconstruct balance at past moment & account for every credit movement with cause. | `get_credit_balance(as_of=...)` replays transaction history up to `as_of`. `Transaction` table records every CREDIT and DEBIT with cause (`PACK_GRANT`, `BOOKING_CHARGE`, `CANCELLATION_REFUND`). |
 | **11** | Idempotency keys prevent duplicate bookings/charges on retry. | Header `Idempotency-Key` required. DB unique constraint `UniqueConstraint(member, idempotency_key)`. Replay returns existing booking without re-charging. |
@@ -93,6 +93,21 @@ Studio manages the full lifecycle of boutique fitness scheduling:
 ---
 
 ## 4. Quickstart & Docker
+
+### Environment Configuration
+
+Copy the example environment file:
+```bash
+# Linux / macOS:
+cp .env.example .env
+
+# Windows (PowerShell):
+Copy-Item .env.example .env
+```
+
+> **Database & Docker Behavior**:
+> - **SQLite Fallback**: If `DB_NAME` is empty or unset, the application automatically uses SQLite (`db.sqlite3`).
+> - **PostgreSQL via Docker**: When using PostgreSQL, setting `DOCKER=True` (or inside containers) defaults `DB_HOST` to `host.docker.internal` so the container connects to PostgreSQL running on your host machine. For local execution, `DB_HOST` defaults to `localhost`.
 
 ### Option A: Docker (One command to run, one to test)
 
@@ -245,8 +260,10 @@ Follow this flow using cURL or the included Postman collection:
 
 8. **Member 1 Cancels Booking (Before Cutoff)**:
    ```bash
-   curl -X DELETE http://127.0.0.1:8000/api/v1/bookings/1/ \
-     -H "Authorization: Bearer $MEMBER1_TOKEN"
+   curl -X PATCH http://127.0.0.1:8000/api/v1/bookings/1/ \
+     -H "Authorization: Bearer $MEMBER1_TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"status": "CANCELLED"}'
    ```
    *Automatic cascading actions:*
    - Member 1's credits are refunded in full (2 credits returned to pack, recorded in ledger).
@@ -289,7 +306,7 @@ Follow this flow using cURL or the included Postman collection:
 | `GET` | `/api/v1/credit-transactions/` | Ledger of all credit movements with cause | Member / Staff |
 | `GET` | `/api/v1/bookings/` | List bookings (`?status=` supported, e.g. `WAITING_LIST`) | Member / Staff |
 | `POST` | `/api/v1/bookings/` | Book class or join waitlist if full (`Idempotency-Key`) | Member |
-| `DELETE`| `/api/v1/bookings/{id}/` | Cancel booking or leave waitlist (cutoff evaluation, refund, promo) | Member |
+| `PATCH` | `/api/v1/bookings/{id}/` | Cancel booking or leave waitlist (`status="CANCELLED"` in body; cutoff evaluation, refund, promo) | Member |
 
 ---
 
